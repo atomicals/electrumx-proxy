@@ -1,7 +1,6 @@
 import express from 'express';
 import * as ElectrumClient from 'electrum-client';
 const router = express.Router();
-
 const esPort = process.env.ELECTRUMX_PORT;
 const esHost = process.env.ELECTRUMX_HOST;
 
@@ -14,6 +13,13 @@ const connectClient = async () => {
     })
     await defaultClient.server_version(`Atomicals ElectrumX proxy v0.1`, "1.4");
     connectedClient = defaultClient;
+
+    // Prepare the keep Alive loop sends ping every 30 seconds
+    setInterval(async () => {
+      console.log('Sending keep-alive to electrumx...');
+      defaultClient.serverDonation_address();
+    }, 30 * 1000)
+    
   } catch (error) {
     console.log('connectClient:exception', error);
     connectedClient = null;
