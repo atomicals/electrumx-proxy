@@ -11,15 +11,21 @@ const connectClient = async () => {
     await defaultClient.connect().then(() => {
       console.log(`Connected: ${esHost}:${esPort}`);
     })
+    defaultClient.onClose = ()=>{
+        console.log("Presisted Connection to ElectrumX Server Closed.")
+        connectedClient = null
+    }
+    
     await defaultClient.server_version(`Atomicals ElectrumX proxy v0.1`, "1.4");
     connectedClient = defaultClient;
 
     // Prepare the keep Alive loop sends ping every 30 seconds
     setInterval(async () => {
       console.log('Sending keep-alive to electrumx...');
-      defaultClient.serverDonation_address();
+      const res = await defaultClient.serverDonation_address();
+      console.log('res', res);
     }, 30 * 1000)
-    
+
   } catch (error) {
     console.log('connectClient:exception', error);
     connectedClient = null;
