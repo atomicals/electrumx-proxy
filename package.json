@@ -21,9 +21,11 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
+    "electrum-client": "file:./electrum-client",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "rpc-websockets": "^7.6.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
