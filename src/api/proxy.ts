@@ -15,7 +15,7 @@ const connectClient = async () => {
         console.log("Presisted Connection to ElectrumX Server Closed.")
         connectedClient = null
     }
-    
+
     await defaultClient.server_version(`Atomicals ElectrumX proxy v0.1`, "1.4");
     connectedClient = defaultClient;
 
@@ -23,7 +23,6 @@ const connectClient = async () => {
     setInterval(async () => {
       console.log('Sending keep-alive to electrumx...');
       const res = await defaultClient.serverDonation_address();
-      console.log('res', res);
     }, 30 * 1000)
 
   } catch (error) {
