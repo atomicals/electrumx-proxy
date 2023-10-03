@@ -33,6 +33,20 @@ const connectClient = async () => {
 
 type ProxyResponse = any;
 
+router.get<{}, ProxyResponse>('/health', async (req, res) => {
+  if (!connectedClient) {
+    await connectClient();
+  }
+  try {
+    await connectedClient.serverDonation_address();
+    res.status(200).json({ success: true, health: true} as any);
+ 
+  } catch (err: any) {
+    console.log('health_error', req.ip, err)
+    res.status(500).json({ success: false, health: false, message: err.message ? err.message : err.toString() } as any);
+  }
+});
+
 router.get<{}, ProxyResponse>('/:method', async (req, res) => {
   if (!connectedClient) {
     await connectClient();
