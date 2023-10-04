@@ -24,7 +24,7 @@ const connectClient = async () => {
 
     // Prepare the keep Alive loop sends ping every 30 seconds
     globalInterval = setInterval(async () => {
-      console.log('Sending keep-alive to ElectrumX(${esHost}:${esPort})...');
+      console.log(`Sending keep-alive to ElectrumX(${esHost}:${esPort})...`);
       const res = await defaultClient.serverDonation_address();
     }, 30 * 1000)
 
