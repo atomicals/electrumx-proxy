@@ -5,23 +5,26 @@ const esPort = process.env.ELECTRUMX_PORT;
 const esHost = process.env.ELECTRUMX_HOST;
 
 let connectedClient;
+let globalInterval;
 const connectClient = async () => {
   try {
     let defaultClient = new ElectrumClient.default(esPort, esHost, 'tcp')
+
+    defaultClient.onClose = () => {
+      console.log(`Presisted Connection to ElectrumX(${esHost}:${esPort}) Server Closed.`)
+      connectedClient = null
+      clearInterval(globalInterval);
+    }
     await defaultClient.connect().then(() => {
       console.log(`Connected: ${esHost}:${esPort}`);
     })
-    defaultClient.onClose = ()=>{
-        console.log("Presisted Connection to ElectrumX Server Closed.")
-        connectedClient = null
-    }
 
     await defaultClient.server_version(`Atomicals ElectrumX proxy v0.1`, "1.4");
     connectedClient = defaultClient;
 
     // Prepare the keep Alive loop sends ping every 30 seconds
-    setInterval(async () => {
-      console.log('Sending keep-alive to electrumx...');
+    globalInterval = setInterval(async () => {
+      console.log('Sending keep-alive to ElectrumX(${esHost}:${esPort})...');
       const res = await defaultClient.serverDonation_address();
     }, 30 * 1000)
 
@@ -39,8 +42,8 @@ router.get<{}, ProxyResponse>('/health', async (req, res) => {
   }
   try {
     await connectedClient.serverDonation_address();
-    res.status(200).json({ success: true, health: true} as any);
- 
+    res.status(200).json({ success: true, health: true } as any);
+
   } catch (err: any) {
     console.log('health_error', req.ip, err)
     res.status(500).json({ success: false, health: false, message: err.message ? err.message : err.toString() } as any);
@@ -81,8 +84,8 @@ router.get<{}, ProxyResponse>('/:method', async (req, res) => {
       sizeResponse = response.length;
     }
     console.log('request_success', req.ip, randomId, 'length: ' + sizeResponse)
-    res.status(200).json({ success: true, response} as any);
- 
+    res.status(200).json({ success: true, response } as any);
+
   } catch (err: any) {
     console.log('request_error', req.ip, randomId, method, err)
     res.status(500).json({ success: false, code: err.code ? err.code : undefined, message: err.message ? err.message : err.toString() } as any);
