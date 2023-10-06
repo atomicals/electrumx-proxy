@@ -82,7 +82,7 @@ const handleProxyRequest = async (req, res) => {
       }
     }
   } else if (req.method === 'POST') {
-    params = req.params;
+    params = req.body.params;
   } else {
     throw new Error('unsupported HTTP method')
   }
