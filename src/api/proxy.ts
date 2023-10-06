@@ -57,28 +57,34 @@ router.get<{}, ProxyResponse>('/health', async (req, res) => {
  * @returns 
  */
 const handleProxyRequest = async (req, res) => {
-  console.log('handleProxyRequest', res);
-  if (!connectedClient) {
-    await connectClient();
-  }
   const method = req.params['method'];
-  let params: any = req.query.params || '[]'
   const randomId = Math.floor(Math.random() * 100000000)
   console.log('request', req.ip, randomId, method, req.params, req.query)
 
-  if (params) {
-    try {
-      params = JSON.parse(params);
-    } catch (err) {
-      console.log('request_json_parse_error', req.ip, randomId, method, err)
-      res.status(422).json({ success: false, message: "invalid params decode" } as any);
-      return;
+  if (!connectedClient) {
+    await connectClient();
+  }
+  let params: any;
+  if (req.method === 'GET') {
+    params = req.query.params || '[]'
+    if (params) {
+      try {
+        params = JSON.parse(params);
+      } catch (err) {
+        console.log('request_json_parse_error', req.ip, randomId, method, err)
+        res.status(422).json({ success: false, message: "invalid params decode" } as any);
+        return;
+      }
+      if (!Array.isArray(params)) {
+        console.log('request_json_array_error', req.ip, randomId, method)
+        res.status(422).json({ success: false, message: "invalid params not array" } as any);
+        return;
+      }
     }
-    if (!Array.isArray(params)) {
-      console.log('request_json_array_error', req.ip, randomId, method)
-      res.status(422).json({ success: false, message: "invalid params not array" } as any);
-      return;
-    }
+  } else if (req.method === 'POST') {
+    params = req.params;
+  } else {
+    throw new Error('unsupported HTTP method')
   }
   try {
     const response = await connectedClient.general_getRequest(method, params);
