@@ -50,7 +50,14 @@ router.get<{}, ProxyResponse>('/health', async (req, res) => {
   }
 });
 
-router.get<{}, ProxyResponse>('/:method', async (req, res) => {
+/**
+ * Handles the request via GET/POST to proxy a request
+ * @param req Request object
+ * @param res Response object
+ * @returns 
+ */
+const handleProxyRequest = async (req, res) => {
+  console.log('handleProxyRequest', res);
   if (!connectedClient) {
     await connectClient();
   }
@@ -90,6 +97,14 @@ router.get<{}, ProxyResponse>('/:method', async (req, res) => {
     console.log('request_error', req.ip, randomId, method, err)
     res.status(500).json({ success: false, code: err.code ? err.code : undefined, message: err.message ? err.message : err.toString() } as any);
   }
+}
+
+router.get<{}, ProxyResponse>('/:method', async (req, res) => {
+  handleProxyRequest(req, res);
+});
+
+router.post<{}, ProxyResponse>('/:method', async (req, res) => {
+  handleProxyRequest(req, res);
 });
 
 export default router;
