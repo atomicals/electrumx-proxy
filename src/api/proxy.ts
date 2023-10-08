@@ -1,5 +1,6 @@
 import express from 'express';
 import * as ElectrumClient from 'electrum-client';
+import { ServerMessage } from '../app';
 const router = express.Router();
 const esPort = process.env.ELECTRUMX_PORT;
 const esHost = process.env.ELECTRUMX_HOST;
@@ -25,7 +26,7 @@ const connectClient = async () => {
     // Prepare the keep Alive loop sends ping every 30 seconds
     globalInterval = setInterval(async () => {
       console.log(`Sending keep-alive to ElectrumX(${esHost}:${esPort})...`);
-      const res = await defaultClient.serverDonation_address();
+      await defaultClient.serverDonation_address();
     }, 30 * 1000)
 
   } catch (error) {
@@ -60,7 +61,6 @@ const handleProxyRequest = async (req, res) => {
   const method = req.params['method'];
   const randomId = Math.floor(Math.random() * 100000000)
   console.log('request', req.ip, randomId, method, req.params, req.query)
-
   if (!connectedClient) {
     await connectClient();
   }
@@ -83,6 +83,7 @@ const handleProxyRequest = async (req, res) => {
     }
   } else if (req.method === 'POST') {
     params = req.body.params;
+    console.log('params', params)
   } else {
     throw new Error('unsupported HTTP method')
   }
@@ -111,6 +112,10 @@ router.get<{}, ProxyResponse>('/:method', async (req, res) => {
 
 router.post<{}, ProxyResponse>('/:method', async (req, res) => {
   handleProxyRequest(req, res);
+});
+
+router.get<{}, ProxyResponse>('/', async (req, res) => {
+  res.status(200).json(ServerMessage);
 });
 
 export default router;
