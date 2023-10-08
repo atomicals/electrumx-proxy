@@ -68,6 +68,11 @@ const handleProxyRequest = async (req, res) => {
   if (req.method === 'GET') {
     params = req.query.params || '[]'
     if (params) {
+      // Params can be hex encoded
+      if (/^[a-fA-F0-9]+$/.test(params)) {
+        params = Buffer.from(params, 'hex').toString('utf8');
+      } 
+      // If it wasnt hex encoded try to detect JSON string
       try {
         params = JSON.parse(params);
       } catch (err) {
@@ -80,6 +85,7 @@ const handleProxyRequest = async (req, res) => {
         res.status(422).json({ success: false, message: "invalid params not array" } as any);
         return;
       }
+    
     }
   } else if (req.method === 'POST') {
     params = req.body.params;
