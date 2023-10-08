@@ -6,6 +6,8 @@ import cors from 'cors';
 import * as middlewares from './middlewares';
 import api from './api';
 import MessageResponse from './interfaces/MessageResponse';
+import pretty from 'express-prettify';
+
 export const ServerMessage = { 
   success: true, 
   info: {
@@ -26,6 +28,7 @@ app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors());
 app.use(express.json({limit: '1mb', type: 'application/json'}));
+app.use(pretty({ query: 'pretty' }));
 
 app.get<{}, MessageResponse>('/', (req, res) => {
   res.status(200).json(ServerMessage as any);
