@@ -1,6 +1,6 @@
 {
   "name": "electrumx-proxy",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Electrumx Proxy Service",
   "main": "src/index.ts",
   "scripts": {
@@ -24,6 +24,7 @@
     "electrum-client": "file:./electrum-client",
     "express": "^4.18.2",
     "express-prettify": "^0.1.2",
+    "express-slow-down": "^1.6.0",
     "helmet": "^7.0.0",
     "morgan": "^1.10.0",
     "rpc-websockets": "^7.6.0"
