@@ -108,7 +108,11 @@ const handleProxyRequest = async (req, res) => {
 
   } catch (err: any) {
     console.log('request_error', req.ip, randomId, method, err)
-    res.status(500).json({ success: false, code: err.code ? err.code : undefined, message: err.message ? err.message : err.toString() } as any);
+    let statusCode = 500;
+    if (err.code === 800422) {
+      statusCode = 422;
+    }
+    res.status(statusCode).json({ success: false, code: err.code ? err.code : undefined, message: err.message ? err.message : err.toString() } as any);
   }
 }
 
