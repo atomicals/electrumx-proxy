@@ -69,3 +69,7 @@ typings/
 .serverless
 
 dist
+
+.env
+package-lock.json
+yarn.lock
