@@ -1,40 +1,6 @@
 import express from 'express';
-import * as ElectrumClient from 'electrum-client';
-import { ServerMessage } from '../app';
+import { ServerMessage, connectClient, connectedClient } from '../app';
 const router = express.Router();
-const esPort = process.env.ELECTRUMX_PORT;
-const esHost = process.env.ELECTRUMX_HOST;
-
-let connectedClient;
-let globalInterval;
-const connectClient = async () => {
-  try {
-    let defaultClient = new ElectrumClient.default(esPort, esHost, 'tcp')
-
-    defaultClient.onClose = () => {
-      console.log(`Presisted Connection to ElectrumX(${esHost}:${esPort}) Server Closed.`)
-      connectedClient = null
-      clearInterval(globalInterval);
-    }
-    await defaultClient.connect().then(() => {
-      console.log(`Connected: ${esHost}:${esPort}`);
-    })
-
-    await defaultClient.server_version(`Atomicals ElectrumX proxy v0.1`, "1.4");
-    connectedClient = defaultClient;
-
-    // Prepare the keep Alive loop sends ping every 30 seconds
-    globalInterval = setInterval(async () => {
-      console.log(`Sending keep-alive to ElectrumX(${esHost}:${esPort})...`);
-      await defaultClient.serverDonation_address();
-    }, 30 * 1000)
-
-  } catch (error) {
-    console.log('connectClient:exception', error);
-    connectedClient = null;
-  }
-};
-
 type ProxyResponse = any;
 
 router.get<{}, ProxyResponse>('/health', async (req, res) => {
