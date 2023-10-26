@@ -1,5 +1,6 @@
 import express from 'express';
 import { ServerMessage, connectClient, connectedClient } from '../app';
+import { UrnResponseFactory } from '../helpers/urn-response-factory';
 const router = express.Router();
 type ObjectServeResponse = any;
 
@@ -16,11 +17,8 @@ const handleUrnRequest = async (req, res) => {
   if (!connectedClient) {
     await connectClient();
   }
-
-  let params = req.params;
-  let urn = params.urn;
-
-  res.status(200).json({ success: true, urn } as any);
+  const urnResponseFactory = new UrnResponseFactory(connectClient);
+  urnResponseFactory.handleRequest(req, res);
 }
 
 router.get<{}, ObjectServeResponse>('/:urn', async (req, res) => {
