@@ -17,7 +17,7 @@ const handleUrnRequest = async (req, res) => {
     await connectClient();
   }
 
-  let params = req.query.params;
+  let params = req.params;
   let urn = params.urn;
 
   res.status(200).json({ success: true, urn } as any);
