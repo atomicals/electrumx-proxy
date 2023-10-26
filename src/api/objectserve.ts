@@ -10,7 +10,17 @@ type ObjectServeResponse = any;
  * @returns 
  */
 const handleUrnRequest = async (req, res) => {
-  res.status(200).json({ success: true } as any);
+  const method = req.params['method'];
+  const randomId = Math.floor(Math.random() * 100000000)
+  console.log('urn_request', req.ip, randomId, method, req.params, req.query)
+  if (!connectedClient) {
+    await connectClient();
+  }
+
+  let params = req.query.params;
+  let urn = params.urn;
+
+  res.status(200).json({ success: true, urn } as any);
 }
 
 router.get<{}, ObjectServeResponse>('/:urn', async (req, res) => {
