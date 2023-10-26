@@ -10,7 +10,6 @@ type ObjectServeResponse = any;
  * @returns 
  */
 const handleUrnRequest = async (req, res) => {
-  console.log('urn', req.params)
   res.status(200).json({ success: true } as any);
 }
 
