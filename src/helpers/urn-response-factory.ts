@@ -83,14 +83,19 @@ export class UrnResponseFactory {
     const atomicalIdInfo: any = isAtomicalId(dataId);
     const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
     const fileMap = buildAtomicalsFileMapFromRawTx(response, true);
- 
-    console.log('fileMap', fileMap)
+
     if (fileMap && fileMap['0'] && fileMap['0']['decoded']) {
-      res.status(200).json(fileMap['0']['decoded']);
+      const decoded = fileMap['0']['decoded'];
+      const trimmedPath = path.substring(1);
+      if (decoded[trimmedPath]) {
+        return decoded[trimmedPath];
+      } else {
+        res.status(200).json(decoded);
+      }
+    
     } else {
       throw new Error('Not found');
     }
-    throw new Error('asd')
   }
 
   private async resolveContainer(containerName: string) {
