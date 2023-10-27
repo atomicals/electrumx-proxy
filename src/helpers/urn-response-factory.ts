@@ -94,7 +94,7 @@ export class UrnResponseFactory {
         const type = mime.lookup(trimmedPath) 
         console.log('type', type)
         res.set('Content-Type', type);
-        res.status(200).send(decoded[trimmedPath]);
+        res.status(200).send(Buffer.from(decoded[trimmedPath], 'hex'));
       } else {
         res.status(200).json(decoded);
       }
