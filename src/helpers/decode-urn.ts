@@ -23,6 +23,15 @@ export const decodeURN = (urn: string): URNInfo => {
       path: matched[2] ? matched[2] : undefined,
     };
   }
+  if (matched = urn.match(/atom\:btc\:id\:([0-9a-f]{64}i\d+)((\/|\$)?.*$)/)) {
+    console.log('matched', matched);
+    return {
+      urnType: URNType.ATOMICAL_ID,
+      identifier: matched[1],
+      pathType: matched[3],
+      path: matched[2] ? matched[2] : undefined,
+    };
+  }
   console.log('matched', matched);
   throw new Error('Invalid URN: ' + urn);
 };
