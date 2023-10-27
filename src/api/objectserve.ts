@@ -3,7 +3,6 @@ import { ServerMessage, connectClient, connectedClient } from '../app';
 import { UrnResponseFactory } from '../helpers/urn-response-factory';
 const router = express.Router();
 type ObjectServeResponse = any;
-
 /**
  * Handles the URN request
  * @param req Request object
@@ -17,8 +16,17 @@ const handleUrnRequest = async (req, res) => {
   if (!connectedClient) {
     await connectClient();
   }
-  const urnResponseFactory = new UrnResponseFactory(connectClient);
-  urnResponseFactory.handleRequest(req, res);
+  try {
+    const urnResponseFactory = new UrnResponseFactory(connectClient);
+    urnResponseFactory.handleRequest(req, res, randomId);
+  } catch (err: any) {
+    console.log('request_error', req.ip, randomId, method, err)
+    let statusCode = 500;
+    if (err.code === 800422) {
+      statusCode = 422;
+    }
+    res.status(statusCode).json({ success: false, code: err.code ? err.code : undefined, message: err.message ? err.message : err.toString() } as any);
+  }
 }
 
 router.get<{}, ObjectServeResponse>('/:urn', async (req, res) => {
