@@ -34,6 +34,7 @@
     "express-slow-down": "^1.6.0",
     "helmet": "^7.0.0",
     "js-sha256": "^0.10.1",
+    "mime-types": "^2.1.35",
     "morgan": "^1.10.0",
     "rpc-websockets": "^7.6.0",
     "tiny-secp256k1": "^2.2.3"
