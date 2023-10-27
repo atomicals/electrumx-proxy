@@ -2,6 +2,25 @@
 import * as ElectrumClient from 'electrum-client';
 import { URNType, decodeURN } from '../helpers/decode-urn';
 
+
+export function isAtomicalId(atomicalId) {
+  if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
+    return false;
+  }
+  try {
+    const splitParts = atomicalId.split('i');
+    const txid = splitParts[0];
+    const index = parseInt(splitParts[1], 10);
+    return {
+      txid,
+      index,
+      atomicalId
+    }
+  } catch (err) {
+  }
+  return null;
+}
+
 export class UrnResponseFactory {
   constructor(private client: ElectrumClient) {
   }
@@ -10,7 +29,7 @@ export class UrnResponseFactory {
     let params = req.params;
     let urn = params.urn;
     if (params['0']) {
-      urn +=  params['0'];
+      urn += params['0'];
     }
     let path = params.path;
     const urnInfo = decodeURN(urn);
@@ -36,7 +55,6 @@ export class UrnResponseFactory {
           break;
       }
       this.handleAtomicalData(atomicalId as any, urnInfo.pathType as any, path, res);
-      // res.status(200).json({ success: true, urnInfo, path } as any);
     } catch (err: any) {
       console.log('request_error', req.ip, randomId, 'urn-response', err);
       let statusCode = 500;
@@ -49,7 +67,6 @@ export class UrnResponseFactory {
   }
 
   private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res) {
-    console.log('handleAtomicalData', pathType, path);
     const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
     let sizeResponse = -1;
     try {
@@ -59,14 +76,21 @@ export class UrnResponseFactory {
       // Ignore because it could not be json
       sizeResponse = response.length;
     }
-      
     res.status(200).json({ success: true, response } as any);
-
   }
 
   private async handlePermanentData(dataId: string, path: string, res) {
-
-    return null;
+    const atomicalIdInfo: any = isAtomicalId(dataId);
+    const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
+    let sizeResponse = -1;
+    try {
+      const serialized = JSON.stringify(response);
+      sizeResponse = serialized.length;
+    } catch (err) {
+      // Ignore because it could not be json
+      sizeResponse = response.length;
+    }
+    res.status(200).json({ success: true, response } as any);
   }
 
   private async resolveContainer(containerName: string) {
