@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as ElectrumClient from 'electrum-client';
 import { URNType, decodeURN } from '../helpers/decode-urn';
+import { buildAtomicalsFileMapFromRawTx } from './builder/atomical-format-helpers';
 
 export function isAtomicalId(atomicalId) {
   if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
@@ -81,6 +82,7 @@ export class UrnResponseFactory {
   private async handlePermanentData(dataId: string, path: string, res) {
     const atomicalIdInfo: any = isAtomicalId(dataId);
     const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
+    const fileMap = buildAtomicalsFileMapFromRawTx(response);
     let sizeResponse = -1;
     try {
       const serialized = JSON.stringify(response);
@@ -89,7 +91,7 @@ export class UrnResponseFactory {
       // Ignore because it could not be json
       sizeResponse = response.length;
     }
-    res.status(200).json({ success: true, response } as any);
+    res.status(200).json({ success: true, response, fileMap } as any);
   }
 
   private async resolveContainer(containerName: string) {
