@@ -206,8 +206,10 @@ export function extractFileFromInputWitness(
             Buffer.isBuffer(witnessScript[i]) &&
             witnessScript[i].toString('utf8') === markerSentinel
           ) {
+            console.log('found markert sent')
             for (; i < witnessScript.length; i++) {
               const opType = witnessScript[i].toString('utf8');
+
               if (
                 Buffer.isBuffer(witnessScript[i]) &&
                 (opType === mintnft ||
