@@ -90,6 +90,7 @@ export class UrnResponseFactory {
       const trimmedPath: any = path ? path.substring(1) : '';
       if (decoded[trimmedPath]) {
         return decoded[trimmedPath];
+        res.status(200).send(decoded[trimmedPath]);
       } else {
         res.status(200).json(decoded);
       }
