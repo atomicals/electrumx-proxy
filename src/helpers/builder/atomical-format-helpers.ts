@@ -1,6 +1,5 @@
 /* eslint-disable import/first */
 import * as ecc from '@bitcoinerlab/secp256k1';
-var Buffer = require('buffer/').Buffer; // note: the trailing slash is important!
 import { ECPairFactory, ECPairAPI, TinySecp256k1Interface } from 'ecpair';
 const tinysecp: TinySecp256k1Interface = require('tiny-secp256k1');
 const bitcoin = require('bitcoinjs-lib');
@@ -207,7 +206,7 @@ export function extractFileFromInputWitness(
         do {
           console.log('if matched', witnessScript[i]);
           if (Buffer.isBuffer(witnessScript[i])) {
-            console.log('if match utf8', witnessScript[i].toString('utf8'))
+            console.log('if match utf8', witnessScript[i].toString('utf8')
           }
         
           if (
