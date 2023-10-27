@@ -1,7 +1,6 @@
 /* eslint-disable import/first */
 import * as ecc from '@bitcoinerlab/secp256k1';
 import { ECPairFactory, ECPairAPI, TinySecp256k1Interface } from 'ecpair';
-const tinysecp: TinySecp256k1Interface = require('tiny-secp256k1');
 const bitcoin = require('bitcoinjs-lib');
 bitcoin.initEccLib(ecc);
 import {
@@ -9,7 +8,7 @@ import {
   networks,
   Psbt,
 } from 'bitcoinjs-lib';
-initEccLib(tinysecp as any);
+initEccLib(ecc);
 
 var script = bitcoin.script;
 var Transaction = bitcoin.Transaction;
