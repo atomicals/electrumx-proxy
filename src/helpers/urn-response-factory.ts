@@ -49,7 +49,7 @@ export class UrnResponseFactory {
   }
 
   private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res) {
-    console.log('client', this.client, pathType, path);
+    console.log('handleAtomicalData', pathType, path);
     const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
     let sizeResponse = -1;
     try {
