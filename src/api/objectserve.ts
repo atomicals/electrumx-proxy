@@ -29,12 +29,12 @@ const handleUrnRequest = async (req, res) => {
   }
 };
 
-router.get<{}, ObjectServeResponse>('/:urn/*', async (req, res) => {
+router.get<{}, ObjectServeResponse>('/:urn', async (req, res) => {
   console.log('urnnnnnn');
   handleUrnRequest(req, res);
 });
 
-router.get<{}, ObjectServeResponse>('/:urn/:path', async (req, res) => {
+router.get<{}, ObjectServeResponse>('/:urn/:path*', async (req, res) => {
   console.log('urnnnnnn path');
   handleUrnRequest(req, res);
 });
