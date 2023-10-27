@@ -82,8 +82,9 @@ export class UrnResponseFactory {
   private async handlePermanentData(dataId: string, path: string, res) {
     const atomicalIdInfo: any = isAtomicalId(dataId);
     const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
-    console.log('response', response);
+
     const fileMap = buildAtomicalsFileMapFromRawTx(response);
+    console.log('fileMap', fileMap);
     let sizeResponse = -1;
     try {
       const serialized = JSON.stringify(response);
