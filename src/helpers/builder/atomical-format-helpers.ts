@@ -195,25 +195,22 @@ export function extractFileFromInputWitness(
 ): any {
   for (const item of inputWitness) {
     const witnessScript: any = script.decompile(item);
-    console.log('extractFileFromInputWitness');
+ 
     if (!witnessScript) {
       continue; // not valid script
     }
-    console.log('extractFileFromInputWitness after');
+ 
     for (let i = 0; i < witnessScript.length; i++) {
-      console.log('i', i);
+ 
       if (witnessScript[i] === bitcoin.opcodes.OP_IF) {
         do {
-          console.log('if matched', witnessScript[i]);
-          if (Buffer.isBuffer(witnessScript[i])) {
-            console.log('if match utf8', witnessScript[i].toString('utf8'));
-          }
         
+         
           if (
             Buffer.isBuffer(witnessScript[i]) &&
             witnessScript[i].toString('utf8') === markerSentinel
           ) {
-            console.log('found markert sent', witnessScript[i].toString('utf8'));
+ 
             for (; i < witnessScript.length; i++) {
               const opType = witnessScript[i].toString('utf8');
 
@@ -226,7 +223,7 @@ export function extractFileFromInputWitness(
                   opType === mintdft ||
                   opType === event)
               ) {
-                console.log('it is a dat', opType);
+ 
                 return parseAtomicalsDataDefinitionOperation(
                   opType,
                   witnessScript,
