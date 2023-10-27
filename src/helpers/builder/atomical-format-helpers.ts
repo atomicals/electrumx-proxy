@@ -26,6 +26,7 @@ const mintnft = 'nft';
 const mintft = 'ft';
 const mintdft = 'dft';
 const update = 'mod';
+const dat = 'dat';
 const event = 'evt';
 
 export enum AtomicalIdentifierType {
@@ -211,6 +212,7 @@ export function extractFileFromInputWitness(
                 Buffer.isBuffer(witnessScript[i]) &&
                 (opType === mintnft ||
                   opType === update ||
+                  opType === dat ||
                   opType === mintft ||
                   opType === mintdft ||
                   opType === event)
