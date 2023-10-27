@@ -17,9 +17,9 @@ export const decodeURN = (urn: string): URNInfo => {
   if (matched = urn.match(/atom\:btc\:dat\:([0-9a-f]{32}i\d+)/)) {
     return {
       urnType: URNType.DAT,
-      identifier: matched[0]
-    }
+      identifier: matched[0],
+    };
   }
-   
-  throw new Error('Invalid URN: ' + urn)
-}
+  console.log('matched', matched)
+  throw new Error('Invalid URN: ' + urn);
+};
