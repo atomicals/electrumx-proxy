@@ -2,6 +2,7 @@
 import * as ElectrumClient from 'electrum-client';
 import { URNType, decodeURN } from '../helpers/decode-urn';
 import { buildAtomicalsFileMapFromRawTx } from './builder/atomical-format-helpers';
+import * as mime from 'mime-types';
 
 export function isAtomicalId(atomicalId) {
   if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
@@ -86,10 +87,13 @@ export class UrnResponseFactory {
 
     if (fileMap && fileMap['0'] && fileMap['0']['decoded']) {
       const decoded = fileMap['0']['decoded'];
-      console.log('path', path)
+      console.log('path', path);
       const trimmedPath: any = path ? path.substring(1) : '';
       if (decoded[trimmedPath]) {
-        return decoded[trimmedPath];
+
+        const type = mime.lookup(trimmedPath) 
+        console.log('type', type)
+        res.set('Content-Type', type);
         res.status(200).send(decoded[trimmedPath]);
       } else {
         res.status(200).json(decoded);
