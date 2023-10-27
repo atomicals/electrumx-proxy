@@ -24,24 +24,24 @@ export let globalInterval;
  */
 export const connectClient = async () => {
   try {
-    let defaultClient = new ElectrumClient.default(esPort, esHost, 'tcp')
+    let defaultClient = new ElectrumClient.default(esPort, esHost, 'tcp');
 
     defaultClient.onClose = () => {
-      console.log(`Presisted Connection to ElectrumX(${esHost}:${esPort}) Server Closed.`)
-      connectedClient = null
+      console.log(`Presisted Connection to ElectrumX(${esHost}:${esPort}) Server Closed.`);
+      connectedClient = null;
       clearInterval(globalInterval);
-    }
+    };
     await defaultClient.connect().then(() => {
       console.log(`Connected: ${esHost}:${esPort}`);
-    })
+    });
 
-    await defaultClient.server_version(`Atomicals ElectrumX proxy v0.1`, "1.4");
+    await defaultClient.server_version('Atomicals ElectrumX proxy v0.1', '1.4');
     connectedClient = defaultClient;
     // Prepare the keep Alive loop sends ping every 30 seconds
     globalInterval = setInterval(async () => {
       console.log(`Sending keep-alive to ElectrumX(${esHost}:${esPort})...`);
       await defaultClient.serverDonation_address();
-    }, 30 * 1000)
+    }, 30 * 1000);
 
   } catch (error) {
     console.log('connectClient:exception', error);
@@ -52,27 +52,27 @@ export const connectClient = async () => {
 export const ServerMessage = { 
   success: true, 
   info: {
-    note: "Atomicals ElectrumX Digital Object Proxy Online",
+    note: 'Atomicals ElectrumX Digital Object Proxy Online',
     usageInfo: {
-      note: "The service offers both POST and GET requests for proxying requests to ElectrumX. To handle larger broadcast transaction payloads use the POST method instead of GET.",
-      POST: "POST /proxy/:method with string encoded array in the field \"params\" in the request body. ",
-      GET: "GET /proxy/:method?params=[\"value1\"] with string encoded array in the query argument \"params\" in the URL.",
+      note: 'The service offers both POST and GET requests for proxying requests to ElectrumX. To handle larger broadcast transaction payloads use the POST method instead of GET.',
+      POST: 'POST /proxy/:method with string encoded array in the field "params" in the request body. ',
+      GET: 'GET /proxy/:method?params=["value1"] with string encoded array in the query argument "params" in the URL.',
     },
-    healthCheck: "GET /proxy/health",
-    github: "https://github.com/atomicals/electrumx-proxy",
-    license: "MIT"
-  }
+    healthCheck: 'GET /proxy/health',
+    github: 'https://github.com/atomicals/electrumx-proxy',
+    license: 'MIT',
+  },
 };
 
 const app = express();
 app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors());
-app.use(express.json({limit: '1mb', type: 'application/json'}));
+app.use(express.json({ limit: '1mb', type: 'application/json' }));
 app.use(pretty({ query: 'pretty' }));
 
 if (process.env.TRUST_PROXY === 'true') {
-  app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+  app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
 }
 
 const speedLimiter = slowDown({
@@ -88,8 +88,8 @@ app.get<{}, MessageResponse>('/', (req, res) => {
   res.status(200).json(ServerMessage as any);
 });
 
-console.log('process.env.ELECTRUMX_PORT', process.env.ELECTRUMX_PORT)
-console.log('process.env.ELECTRUMX_HOST', process.env.ELECTRUMX_HOST)
+console.log('process.env.ELECTRUMX_PORT', process.env.ELECTRUMX_PORT);
+console.log('process.env.ELECTRUMX_HOST', process.env.ELECTRUMX_HOST);
 
 app.use('/', api);
 
@@ -102,7 +102,7 @@ app.get<{}, MessageResponse>('/health', async (req, res) => {
     res.status(200).json({ success: true, health: true } as any);
 
   } catch (err: any) {
-    console.log('health_error', req.ip, err)
+    console.log('health_error', req.ip, err);
     res.status(500).json({ success: false, health: false, message: err.message ? err.message : err.toString() } as any);
   }
 });

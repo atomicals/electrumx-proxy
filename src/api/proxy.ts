@@ -12,7 +12,7 @@ router.get<{}, ProxyResponse>('/health', async (req, res) => {
     res.status(200).json({ success: true, health: true } as any);
 
   } catch (err: any) {
-    console.log('health_error', req.ip, err)
+    console.log('health_error', req.ip, err);
     res.status(500).json({ success: false, health: false, message: err.message ? err.message : err.toString() } as any);
   }
 });
@@ -24,15 +24,15 @@ router.get<{}, ProxyResponse>('/health', async (req, res) => {
  * @returns 
  */
 const handleProxyRequest = async (req, res) => {
-  const method = req.params['method'];
-  const randomId = Math.floor(Math.random() * 100000000)
-  console.log('request', req.ip, randomId, method, req.params, req.query)
+  const method = req.params.method;
+  const randomId = Math.floor(Math.random() * 100000000);
+  console.log('request', req.ip, randomId, method, req.params, req.query);
   if (!connectedClient) {
     await connectClient();
   }
   let params: any;
   if (req.method === 'GET') {
-    params = req.query.params || '[]'
+    params = req.query.params || '[]';
     if (params) {
       // Params can be hex encoded
       if (/^[a-fA-F0-9]+$/.test(params)) {
@@ -42,45 +42,45 @@ const handleProxyRequest = async (req, res) => {
       try {
         params = JSON.parse(params);
       } catch (err) {
-        console.log('request_json_parse_error', req.ip, randomId, method, err)
-        res.status(422).json({ success: false, message: "invalid params decode" } as any);
+        console.log('request_json_parse_error', req.ip, randomId, method, err);
+        res.status(422).json({ success: false, message: 'invalid params decode' } as any);
         return;
       }
       if (!Array.isArray(params)) {
-        console.log('request_json_array_error', req.ip, randomId, method)
-        res.status(422).json({ success: false, message: "invalid params not array" } as any);
+        console.log('request_json_array_error', req.ip, randomId, method);
+        res.status(422).json({ success: false, message: 'invalid params not array' } as any);
         return;
       }
     
     }
   } else if (req.method === 'POST') {
     params = req.body.params;
-    console.log('params', params)
+    console.log('params', params);
   } else {
-    throw new Error('unsupported HTTP method')
+    throw new Error('unsupported HTTP method');
   }
   try {
     const response = await connectedClient.general_getRequest(method, params);
     let sizeResponse = -1;
     try {
       const serialized = JSON.stringify(response);
-      sizeResponse = serialized.length
+      sizeResponse = serialized.length;
     } catch (err) {
       // Ignore because it could not be json
       sizeResponse = response.length;
     }
-    console.log('request_success', req.ip, randomId, 'length: ' + sizeResponse)
+    console.log('request_success', req.ip, randomId, 'length: ' + sizeResponse);
     res.status(200).json({ success: true, response } as any);
 
   } catch (err: any) {
-    console.log('request_error', req.ip, randomId, method, err)
+    console.log('request_error', req.ip, randomId, method, err);
     let statusCode = 500;
     if (err.code === 800422) {
       statusCode = 422;
     }
     res.status(statusCode).json({ success: false, code: err.code ? err.code : undefined, message: err.message ? err.message : err.toString() } as any);
   }
-}
+};
 
 router.get<{}, ProxyResponse>('/:method', async (req, res) => {
   handleProxyRequest(req, res);
