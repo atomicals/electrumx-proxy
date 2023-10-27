@@ -1,6 +1,7 @@
 /* eslint-disable import/first */
 import * as bs58check from 'bs58check';
 import { sha256 } from 'js-sha256';
+const bitcoin = require('bitcoinjs-lib');
 var Buffer = require('buffer/').Buffer; // note: the trailing slash is important!
 import * as ecc from '@bitcoinerlab/secp256k1';
 bitcoin.initEccLib(ecc);
