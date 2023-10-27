@@ -40,6 +40,7 @@ router.get<{}, ObjectServeResponse>('/validate/:urn*', async (req, res) => {
   res.status(200).json({ success: true, urnInfo } as any);
 });
 
+ 
 router.get<{}, ObjectServeResponse>('/:urn*', async (req, res) => {
   handleUrnRequest(req, res);
 });
