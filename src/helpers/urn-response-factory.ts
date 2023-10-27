@@ -9,6 +9,7 @@ export class UrnResponseFactory {
   async handleRequest(req: any, res: any, randomId: any) {
     let params = req.params;
     let urn = params.urn;
+    let path = params.path;
     const urnInfo = decodeURN(urn);
     try {
 
@@ -23,7 +24,7 @@ export class UrnResponseFactory {
           sizeResponse = response.length;
         }*/
       console.log('request_success', req.ip, randomId);
-      res.status(200).json({ success: true, urnInfo } as any);
+      res.status(200).json({ success: true, urnInfo, path } as any);
 
     } catch (err: any) {
       console.log('request_error', req.ip, randomId, 'urn-response', err);
