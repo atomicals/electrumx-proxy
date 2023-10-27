@@ -1,6 +1,7 @@
 import express from 'express';
 import { ServerMessage, connectClient, connectedClient } from '../app';
 import { UrnResponseFactory } from '../helpers/urn-response-factory';
+import { decodeURN } from '../helpers/decode-urn';
 const router = express.Router();
 type ObjectServeResponse = any;
 /**
@@ -29,12 +30,20 @@ const handleUrnRequest = async (req, res) => {
   }
 };
 
+router.get<{}, ObjectServeResponse>('/validate/:urn*', async (req, res) => {
+  let params: any = req.params;
+  let urn = params.urn;
+  if (params['0']) {
+    urn +=  params['0'];
+  }
+  const urnInfo = decodeURN(urn);
+  res.status(200).json({ success: true, urnInfo } as any);
+});
+
 router.get<{}, ObjectServeResponse>('/:urn*', async (req, res) => {
-  console.log('urnnnnnn');
   handleUrnRequest(req, res);
 });
 
- 
 
 router.get<{}, ObjectServeResponse>('/', async (req, res) => {
   res.status(200).json(ServerMessage);
