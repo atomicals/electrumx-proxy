@@ -1,6 +1,7 @@
 /* eslint-disable import/first */
 var Buffer = require('buffer/').Buffer; // note: the trailing slash is important!
 import * as ecc from '@bitcoinerlab/secp256k1';
+const bitcoin = require('bitcoinjs-lib');
 bitcoin.initEccLib(ecc);
 import {
     initEccLib,

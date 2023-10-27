@@ -5,10 +5,10 @@ import * as ecc from '@bitcoinerlab/secp256k1';
 const bitcoin = require('bitcoinjs-lib');
 bitcoin.initEccLib(ecc);
 import {
-    initEccLib,
-    networks,
-    Psbt,
-} from "bitcoinjs-lib";
+  initEccLib,
+  networks,
+  Psbt,
+} from 'bitcoinjs-lib';
 initEccLib(ecc);
 
 import { ECPairFactory, ECPairAPI } from 'ecpair';
@@ -26,9 +26,6 @@ import {
   isValidTickerName,
 } from './atomical-format-helpers';
 
-import * as chalk from 'chalk';
-var networks = window['bitcoin']['networks'];
-var Psbt = window['bitcoin']['Psbt'];
 
 import {
   AtomicalsPayload,
@@ -38,7 +35,7 @@ import {
 } from './commands/command-helpers';
 import { getFundingUtxo } from './select-funding-utxo';
 import { witnessStackToScriptWitness } from './witness_stack_to_script_witness';
-import { ElectrumApiInterface } from 'utils/builder/services/electrum-api.interface';
+import { ElectrumApiInterface } from '../builder/services/electrum-api.interface';
 
 const sleeper = async seconds => {
   return new Promise(resolve => {
@@ -146,7 +143,7 @@ function logMiningProgressToConsole(dowork: boolean, nonces, callback?: Function
     if (callback) {
       callback({
         event: 'nonces',
-        nonces
+        nonces,
       });
     }
   }
@@ -158,7 +155,7 @@ function printBitworkLog(bitworkInfo: BitworkInfo, commit?: boolean) {
   console.log(
     `\nAtomicals Bitwork Mining - Requested bitwork proof-of-work mining for the ${
       commit ? 'commit' : 'reveal'
-    } transaction.`
+    } transaction.`,
   );
   if (commit) {
     console.log(`bitworkc (input): ${bitworkInfo.input_bitwork}`);
@@ -168,14 +165,14 @@ function printBitworkLog(bitworkInfo: BitworkInfo, commit?: boolean) {
     console.log(`bitworkr (decoded): ${bitworkInfo.hex_bitwork}`);
   }
   console.log(
-    `---------\nWARNING: This might take a very long time depending on the speed of the CPU.`
+    '---------\nWARNING: This might take a very long time depending on the speed of the CPU.',
   );
-  console.log(`Time to mine estimates: `);
-  console.log(`- prefix length <= 4: about a minute or two. ~65,536 hashes on average.`);
-  console.log(`- prefix length 5: several minutes. ~1,048,576 hashes on average.`);
-  console.log(`- prefix length 6: up to an hour or more. ~16,777,216 hashes on average.`);
-  console.log(`- prefix length >= 7: a few hours or much longer. >268,435,456 hashes on average.`);
-  console.log(`\nStarting mining now...\n`);
+  console.log('Time to mine estimates: ');
+  console.log('- prefix length <= 4: about a minute or two. ~65,536 hashes on average.');
+  console.log('- prefix length 5: several minutes. ~1,048,576 hashes on average.');
+  console.log('- prefix length 6: up to an hour or more. ~16,777,216 hashes on average.');
+  console.log('- prefix length >= 7: a few hours or much longer. >268,435,456 hashes on average.');
+  console.log('\nStarting mining now...\n');
 }
 export enum REQUEST_NAME_TYPE {
   NONE = 'NONE',
@@ -228,25 +225,39 @@ export interface AtomicalOperationBuilderOptions {
 
 export class AtomicalOperationBuilder {
   private userDefinedData: AtomicalsPayload | null = null;
+
   private containerMembership: string | null = null;
+
   private bitworkInfoCommit: BitworkInfo | null = null;
+
   private bitworkInfoReveal: BitworkInfo | null = null;
+
   private requestName: string | null = null;
+
   private requestSubrealmPid: string | null = null;
+
   private requestNameType: REQUEST_NAME_TYPE = REQUEST_NAME_TYPE.NONE;
+
   private meta: any = {};
+
   private args: any = {};
+
   private init: any = {};
+
   private ctx: any = {};
+
   private parentInputAtomical: ParentInputAtomical | null = null;
+
   private inputUtxos: Array<{
     utxo: IInputUtxoPartial;
     keypairInfo: KeyPairInfo;
   }> = [];
+
   private additionalOutputs: Array<{
     address: string;
     value: number;
   }> = [];
+
   constructor(private options: AtomicalOperationBuilderOptions, private fundingWIFCallback: any) {
     if (!this.options) {
       throw new Error('Options required');
@@ -362,20 +373,20 @@ export class AtomicalOperationBuilder {
     if (typeof data !== 'object') {
       throw new Error('Data must be an object');
     }
-    if (data['args']) {
-      throw new Error(`Data cannot have field named 'args' set manually`);
+    if (data.args) {
+      throw new Error('Data cannot have field named \'args\' set manually');
     }
-    if (data['meta']) {
-      throw new Error(`Data cannot have field named 'meta' set manually`);
+    if (data.meta) {
+      throw new Error('Data cannot have field named \'meta\' set manually');
     }
-    if (data['ctx']) {
-      throw new Error(`Data cannot have field named 'ctx' set manually`);
+    if (data.ctx) {
+      throw new Error('Data cannot have field named \'ctx\' set manually');
     }
-    if (data['init']) {
-      throw new Error(`Data cannot have field named 'init' set manually`);
+    if (data.init) {
+      throw new Error('Data cannot have field named \'init\' set manually');
     }
-    if (data['in']) {
-      throw new Error(`Data cannot have field named 'in' set manually`);
+    if (data.in) {
+      throw new Error('Data cannot have field named \'in\' set manually');
     }
     this.userDefinedData = data;
     if (log) {
@@ -414,6 +425,7 @@ export class AtomicalOperationBuilder {
     }
     this.bitworkInfoCommit = isValidBitworkString(bitworkString);
   }
+
   setBitworkReveal(bitworkString: string | undefined) {
     if (!bitworkString) {
       return;
@@ -472,79 +484,79 @@ export class AtomicalOperationBuilder {
     let performBitworkForCommitTx = !!this.bitworkInfoCommit;
     let scriptP2TR: any = null;
     let hashLockP2TR: any = null;
-    let copiedData = Object.assign({}, this.userDefinedData);
+    let copiedData: any = Object.assign({}, this.userDefinedData);
 
     if (!this.isEmpty(this.getArgs())) {
-      copiedData['args'] = this.getArgs();
+      copiedData.args = this.getArgs();
     }
 
     if (this.options.meta) {
-      copiedData['meta'] = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
-        this.options.meta
+      copiedData.meta = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
+        this.options.meta,
       );
     }
     if (this.options.init) {
-      copiedData['init'] = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
-        this.options.init
+      copiedData.init = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
+        this.options.init,
       );
     }
     if (this.options.ctx) {
-      copiedData['ctx'] = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
-        this.options.ctx
+      copiedData.ctx = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
+        this.options.ctx,
       );
     }
     if (this.options.meta) {
-      copiedData['meta'] = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
-        this.options.meta
+      copiedData.meta = await AtomicalOperationBuilder.getDataObjectFromStringTypeHints(
+        this.options.meta,
       );
     }
 
     // If it's a container membership request, add it in
     if (this.containerMembership) {
-      copiedData['in'] = `["#${this.containerMembership}"]`;
+      copiedData.in = `["#${this.containerMembership}"]`;
     }
 
     switch (this.requestNameType) {
       case REQUEST_NAME_TYPE.TICKER:
-        copiedData['args'] = copiedData['args'] || {};
-        copiedData['args']['request_ticker'] = this.requestName;
+        copiedData.args = copiedData.args || {};
+        copiedData.args.request_ticker = this.requestName;
         break;
       case REQUEST_NAME_TYPE.REALM:
-        copiedData['args'] = copiedData['args'] || {};
-        copiedData['args']['request_realm'] = this.requestName;
+        copiedData.args = copiedData.args || {};
+        copiedData.args.request_realm = this.requestName;
         break;
       case REQUEST_NAME_TYPE.SUBREALM:
-        copiedData['args'] = copiedData['args'] || {};
-        copiedData['args']['request_subrealm'] = this.requestName;
-        copiedData['args']['parent_realm'] = this.requestSubrealmPid;
+        copiedData.args = copiedData.args || {};
+        copiedData.args.request_subrealm = this.requestName;
+        copiedData.args.parent_realm = this.requestSubrealmPid;
         break;
       case REQUEST_NAME_TYPE.CONTAINER:
-        copiedData['args'] = copiedData['args'] || {};
-        copiedData['args']['request_container'] = this.requestName;
+        copiedData.args = copiedData.args || {};
+        copiedData.args.request_container = this.requestName;
         break;
       default:
         break;
     }
 
     if (performBitworkForCommitTx) {
-      copiedData['args'] = copiedData['args'] || {};
-      copiedData['args']['bitworkc'] = this.bitworkInfoCommit?.hex_bitwork;
+      copiedData.args = copiedData.args || {};
+      copiedData.args.bitworkc = this.bitworkInfoCommit?.hex_bitwork;
     }
 
     if (performBitworkForRevealTx) {
-      copiedData['args'] = copiedData['args'] || {};
-      copiedData['args']['bitworkr'] = this.bitworkInfoReveal?.hex_bitwork;
+      copiedData.args = copiedData.args || {};
+      copiedData.args.bitworkr = this.bitworkInfoReveal?.hex_bitwork;
     }
 
     if (this.options.opType === 'dmt') {
-      copiedData['args'] = copiedData['args'] || {};
-      copiedData['args']['mint_ticker'] = this.options.dmtOptions?.ticker;
+      copiedData.args = copiedData.args || {};
+      copiedData.args.mint_ticker = this.options.dmtOptions?.ticker;
     }
 
     let parentAtomicalInfo: ParentInputAtomical | null | any = this.getInputParent();
     if (parentAtomicalInfo) {
-      copiedData['args'] = copiedData['args'] || {};
-      copiedData['args']['parents'] = { [parentAtomicalInfo.parentId]: 0 }; // Also supports one parent for now
+      copiedData.args = copiedData.args || {};
+      copiedData.args.parents = { [parentAtomicalInfo.parentId]: 0 }; // Also supports one parent for now
     }
     console.log('Payload Encoded: ', copiedData);
     let unixtime = Math.floor(Date.now() / 1000);
@@ -555,10 +567,10 @@ export class AtomicalOperationBuilder {
     const mockBaseCommitForFeeCalculation: { scriptP2TR; hashLockP2TR } = prepareCommitRevealConfig(
       this.options.opType,
       fundingKeypair,
-      mockAtomPayload
+      mockAtomPayload,
     );
     const fees: FeeCalculations = this.calculateFeesRequiredForAccumulatedCommitAndReveal(
-      mockBaseCommitForFeeCalculation.hashLockP2TR.redeem.output.length
+      mockBaseCommitForFeeCalculation.hashLockP2TR.redeem.output.length,
     );
     return {
       parentAtomicalInfo,
@@ -605,7 +617,7 @@ export class AtomicalOperationBuilder {
     this.emitEvent({
       event: 'start_init',
       fees,
-      unixtime
+      unixtime,
     });
 
     let startUnixtime = unixtime;
@@ -616,34 +628,34 @@ export class AtomicalOperationBuilder {
       console.log(`Sleeping every ${this.options.sleepEvery} nonces...`);
       this.emitEvent({
         event: 'start_commit_bitwork',
-        args: copiedData['args']
+        args: copiedData.args,
       });
-      copiedData['args'] = copiedData['args'] || {};
-      copiedData['args']['nonce'] = 9999999; // placeholder for only estimating tx deposit fee size
-      copiedData['args']['time'] = unixtime; // placeholder for only estimating tx deposit fee size
+      copiedData.args = copiedData.args || {};
+      copiedData.args.nonce = 9999999; // placeholder for only estimating tx deposit fee size
+      copiedData.args.time = unixtime; // placeholder for only estimating tx deposit fee size
       this.emitEvent({
         event: 'get_commit_funding_utxo',
-        address: fundingKeypair.address
+        address: fundingKeypair.address,
       });
       const fundingUtxo = await getFundingUtxo(
         this.options.electrumApi,
         fundingKeypair.address,
         fees.commitAndRevealFeePlusOutputs,
-        3
+        3,
       );
       this.emitEvent({
         event: 'commit_funding_utxo_finished',
         address: fundingKeypair.address,
-        fundingUtxo
+        fundingUtxo,
       });
 
       printBitworkLog(this.bitworkInfoCommit as any, true);
       this.options.electrumApi.close();
       do {
-        copiedData['args']['nonce'] = nonce;
+        copiedData.args.nonce = nonce;
         if (noncesGenerated % 1000 === 0) {
           unixtime = Math.floor(Date.now() / 1000);
-          copiedData['args']['time'] = unixtime;
+          copiedData.args.time = unixtime;
           nonce = Math.floor(Math.random() * 10000000);
         } else {
           nonce++;
@@ -675,7 +687,7 @@ export class AtomicalOperationBuilder {
           fees,
           psbtStart,
           updatedBaseCommit.hashscript.length,
-          fundingKeypair.address
+          fundingKeypair.address,
         );
 
         psbtStart.signInput(0, fundingKeypair.tweakedChildNode);
@@ -686,7 +698,7 @@ export class AtomicalOperationBuilder {
         logMiningProgressToConsole(
           performBitworkForCommitTx,
           noncesGenerated,
-          this.options.callbackProgress
+          this.options.callbackProgress,
         );
         if (this.options.sleepEvery && noncesGenerated % this.options.sleepEvery === 0) {
           await sleeperMs(1);
@@ -698,7 +710,7 @@ export class AtomicalOperationBuilder {
           hasValidBitwork(
             checkTxid,
             this.bitworkInfoCommit?.prefix as any,
-            this.bitworkInfoCommit?.ext as any
+            this.bitworkInfoCommit?.ext as any,
           )
         ) {
           console.log(
@@ -706,7 +718,7 @@ export class AtomicalOperationBuilder {
             prelimTx.getId(),
             '@ time: ' + Math.floor(Date.now() / 1000),
             'nonces:',
-            noncesGenerated
+            noncesGenerated,
           );
           // We found a solution, therefore broadcast it
           const interTx = psbtStart.extractTransaction();
@@ -719,7 +731,7 @@ export class AtomicalOperationBuilder {
             rawtx,
           });
 
-         /*console.log('aborting sample');
+          /*console.log('aborting sample');
           return {
             commitTxid: prelimTx.getId(),
             revealTxid: prelimTx.getId(),
@@ -739,7 +751,7 @@ export class AtomicalOperationBuilder {
             });
 
             throw new Error(
-              'Unable to broadcast commit transaction after attempts: ' + prelimTx.getId()
+              'Unable to broadcast commit transaction after attempts: ' + prelimTx.getId(),
             );
           } else {
             console.log('Success sent tx: ', prelimTx.getId());
@@ -763,14 +775,14 @@ export class AtomicalOperationBuilder {
       const baseCommit: { scriptP2TR; hashLockP2TR } = prepareCommitRevealConfig(
         this.options.opType,
         fundingKeypair,
-        new AtomicalsPayload(copiedData)
+        new AtomicalsPayload(copiedData),
       );
       scriptP2TR = baseCommit.scriptP2TR;
       hashLockP2TR = baseCommit.hashLockP2TR;
       this.emitEvent({
         event: 'start_commit',
         scriptP2TR,
-        hashLockP2TR
+        hashLockP2TR,
       });
     }
 
@@ -781,7 +793,7 @@ export class AtomicalOperationBuilder {
     this.emitEvent({
       event: 'get_reveal_funding_utxo',
       scriptP2TR,
-      hashLockP2TR
+      hashLockP2TR,
     });
 
     ////////////////////////////////////////////////////////////////////////
@@ -793,12 +805,12 @@ export class AtomicalOperationBuilder {
       this.options.electrumApi,
       scriptP2TR.address,
       fees.revealFeePlusOutputs as any,
-      5
+      5,
     );
     this.emitEvent({
       event: 'reveal_funding_utxo_finished',
       address: fundingKeypair.address,
-      utxoOfCommitAddress
+      utxoOfCommitAddress,
     });
 
     this.emitEvent({
@@ -911,7 +923,7 @@ export class AtomicalOperationBuilder {
       logMiningProgressToConsole(
         performBitworkForRevealTx,
         noncesGenerated,
-        this.options.callbackProgress
+        this.options.callbackProgress,
       );
       let shouldBroadcast = !performBitworkForRevealTx;
       if (
@@ -919,18 +931,18 @@ export class AtomicalOperationBuilder {
         hasValidBitwork(
           checkTxid,
           this.bitworkInfoReveal?.prefix as any,
-          this.bitworkInfoReveal?.ext as any
+          this.bitworkInfoReveal?.ext as any,
         )
       ) {
         this.emitEvent({
           event: 'reveal_bitwork_solved',
           scriptP2TR,
-          hashLockP2TR
+          hashLockP2TR,
         });
         console.log(
           '\nBitwork matches reveal txid! ',
           revealTx.getId(),
-          '@ time: ' + Math.floor(Date.now() / 1000)
+          '@ time: ' + Math.floor(Date.now() / 1000),
         );
         shouldBroadcast = true;
       }
@@ -946,7 +958,7 @@ export class AtomicalOperationBuilder {
           this.emitEvent({
             event: 'reveal_broadcast_abort_retries',
             scriptP2TR,
-            hashLockP2TR
+            hashLockP2TR,
           });
           throw new Error('Unable to broadcast reveal transaction after attempts');
         } else {
@@ -954,7 +966,7 @@ export class AtomicalOperationBuilder {
           this.emitEvent({
             event: 'reveal_broadcast_success',
             scriptP2TR,
-            hashLockP2TR
+            hashLockP2TR,
           });
         }
         revealTxid = interTx.getId();
@@ -964,7 +976,7 @@ export class AtomicalOperationBuilder {
       noncesGenerated++;
     } while (performBitworkForRevealTx);
 
-    const ret = {
+    const ret: any = {
       success: true,
       data: {
         commitTxid,
@@ -979,7 +991,7 @@ export class AtomicalOperationBuilder {
       this.options.opType === 'ft' ||
       this.options.opType === 'dft'
     ) {
-      ret['data']['atomicalId'] = atomicalId;
+      ret.data.atomicalId = atomicalId;
     }
     return ret;
   }
@@ -993,7 +1005,7 @@ export class AtomicalOperationBuilder {
         if (result) {
           this.emitEvent({
             event: 'broadcast_with_retries_success',
-            rawtx
+            rawtx,
           });
           return result;
         }
@@ -1001,12 +1013,12 @@ export class AtomicalOperationBuilder {
         console.log('Network error broadcasting (Trying again soon...)', err);
         this.emitEvent({
           event: 'broadcast_with_retries_error',
-          rawtx
+          rawtx,
         });
         await this.options.electrumApi.resetConnection();
         // Put in a sleep to help the connection reset more gracefully in case there is some delay
         console.log(
-          `Will retry to broadcast transaction again in ${SEND_RETRY_SLEEP_SECONDS} seconds...`
+          `Will retry to broadcast transaction again in ${SEND_RETRY_SLEEP_SECONDS} seconds...`,
         );
         await sleeper(SEND_RETRY_SLEEP_SECONDS);
       }
@@ -1015,7 +1027,7 @@ export class AtomicalOperationBuilder {
 
     this.emitEvent({
       event: 'broadcast_with_retries_exhausted',
-      attempts
+      attempts,
     });
 
     return result;
@@ -1082,7 +1094,7 @@ export class AtomicalOperationBuilder {
    * @returns
    */
   calculateFeesRequiredForAccumulatedCommitAndReveal(
-    hashLockP2TROutputLen: number = 0
+    hashLockP2TROutputLen: number = 0,
   ): FeeCalculations {
     const revealFee = this.calculateAmountRequiredForReveal(hashLockP2TROutputLen);
     const commitFee = this.calculateFeesRequiredForCommit();
@@ -1135,7 +1147,7 @@ export class AtomicalOperationBuilder {
     fee: FeeCalculations,
     pbst: any,
     hashScriptLen: number,
-    address: string
+    address: string,
   ) {
     const totalInputsValue = extraInputValue + this.getTotalAdditionalInputValues();
     const totalOutputsValue = this.getTotalAdditionalOutputValues() + fee.revealFeePlusOutputs;
@@ -1175,7 +1187,7 @@ export class AtomicalOperationBuilder {
     });
     if (sumInputs - sumOutputs > EXCESSIVE_FEE_LIMIT) {
       throw new Error(
-        `Excessive fee detected. Hardcoded to ${EXCESSIVE_FEE_LIMIT} satoshis. Aborting due to protect funds. Contact developer`
+        `Excessive fee detected. Hardcoded to ${EXCESSIVE_FEE_LIMIT} satoshis. Aborting due to protect funds. Contact developer`,
       );
     }
   }
@@ -1189,12 +1201,12 @@ export class AtomicalOperationBuilder {
   static async resolveInputParent(
     electrumxApi: ElectrumApiInterface,
     parentId,
-    parentOwner: any
+    parentOwner: any,
   ): Promise<ParentInputAtomical> {
     const { atomicalInfo, locationInfo, inputUtxoPartial } = await getAndCheckAtomicalInfo(
       electrumxApi,
       parentId,
-      parentOwner.address as any
+      parentOwner.address as any,
     );
     const parentKeypairInput = ECPair.fromWIF(parentOwner.WIF as any);
     const parentKeypairInputInfo = getKeypairInfo(parentKeypairInput);

@@ -1,5 +1,5 @@
 
-import { ElectrumApiInterface } from 'utils/builder/services/electrum-api.interface';
+import { ElectrumApiInterface } from '../../builder/services/electrum-api.interface';
 import { decorateAtomical } from '../atomical-format-helpers';
 import { AtomicalsGetFetchType, CommandInterface } from './command.interface';
 import { GetCommand } from './get-command';

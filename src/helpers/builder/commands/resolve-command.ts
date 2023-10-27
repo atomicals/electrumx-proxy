@@ -10,7 +10,7 @@ import { GetByRealmCommand } from './get-by-realm-command';
 import { GetByContainerCommand } from './get-by-container-command';
 import { GetByTickerCommand } from './get-by-ticker-command';
 import { GetCommand } from './get-command';
-import { ElectrumApiInterface } from 'utils/builder/services/electrum-api.interface';
+import { ElectrumApiInterface } from '../../builder/services/electrum-api.interface';
 
 export class ResolveCommand implements CommandInterface {
   constructor(
