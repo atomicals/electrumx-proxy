@@ -200,7 +200,9 @@ export function extractFileFromInputWitness(
     if (!witnessScript) {
       continue; // not valid script
     }
+    console.log('extractFileFromInputWitness after')
     for (let i = 0; i < witnessScript.length; i++) {
+      console.log('i', i)
       if (witnessScript[i] === bitcoin.opcodes.OP_IF) {
         do {
           if (
