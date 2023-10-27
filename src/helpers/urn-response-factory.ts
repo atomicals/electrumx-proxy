@@ -85,8 +85,8 @@ export class UrnResponseFactory {
     const fileMap = buildAtomicalsFileMapFromRawTx(response, true);
  
     console.log('fileMap', fileMap)
-    if (fileMap && fileMap['0'] && fileMap['decoded']) {
-      res.status(200).json(fileMap['decoded']);
+    if (fileMap && fileMap['0'] && fileMap['0']['decoded']) {
+      res.status(200).json(fileMap['0']['decoded']);
     } else {
       throw new Error('Not found');
     }
