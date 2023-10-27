@@ -49,8 +49,19 @@ export class UrnResponseFactory {
   }
 
   private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res) {
+    
+    const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
+    let sizeResponse = -1;
+    try {
+      const serialized = JSON.stringify(response);
+      sizeResponse = serialized.length;
+    } catch (err) {
+      // Ignore because it could not be json
+      sizeResponse = response.length;
+    }
+      
+    res.status(200).json({ success: true, response } as any);
 
-    return null;
   }
 
   private async handlePermanentData(dataId: string, path: string, res) {
