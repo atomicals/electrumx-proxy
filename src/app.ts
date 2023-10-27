@@ -84,14 +84,17 @@ const speedLimiter = slowDown({
 //  apply to all requests
 app.use(speedLimiter);
 
-app.get<{}, MessageResponse>('/', (req, res) => {
-  res.status(200).json(ServerMessage as any);
-});
 
 console.log('process.env.ELECTRUMX_PORT', process.env.ELECTRUMX_PORT);
 console.log('process.env.ELECTRUMX_HOST', process.env.ELECTRUMX_HOST);
 
 app.use('/', api);
+
+ 
+app.get<{}, MessageResponse>('/', (req, res) => {
+  res.status(200).json(ServerMessage as any);
+});
+ 
 
 app.get<{}, MessageResponse>('/health', async (req, res) => {
   if (!connectedClient) {

@@ -24,6 +24,7 @@ export class GetByContainerCommand implements CommandInterface {
         data: responseResult.result,
       };
     }
+    // https://ob.atomicals.xyz/urn/atom:btc:dat:0d4d83cfb24b6d740031fb937daed09dc77fa4d0a1e46e3b0aa57c992f4863dei0
     const getDefaultCommand = new GetCommand(
       this.electrumApi,
       responseResult.result.atomical_id,
