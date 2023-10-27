@@ -5,10 +5,10 @@ const tinysecp: TinySecp256k1Interface = require('tiny-secp256k1');
 const bitcoin = require('bitcoinjs-lib');
 bitcoin.initEccLib(ecc);
 import {
-    initEccLib,
-    networks,
-    Psbt,
-} from "bitcoinjs-lib";
+  initEccLib,
+  networks,
+  Psbt,
+} from 'bitcoinjs-lib';
 initEccLib(tinysecp as any);
 
 var script = bitcoin.script;
@@ -45,7 +45,7 @@ export interface AtomicalResolvedIdentifierReturn {
 
 /** Checks whether a string is an atomicalId, realm/subrealm name, container or ticker */
 export const getAtomicalIdentifierType = (
-  providedIdentifier: any
+  providedIdentifier: any,
 ): AtomicalResolvedIdentifierReturn => {
   if (isAtomicalId(providedIdentifier)) {
     return {
@@ -56,7 +56,7 @@ export const getAtomicalIdentifierType = (
 
   if (providedIdentifier === null) {
     throw new Error(
-      'atomicalId, number or name of some kind must be provided such as +name, $ticker, or #container'
+      'atomicalId, number or name of some kind must be provided such as +name, $ticker, or #container',
     );
   }
 
@@ -152,7 +152,7 @@ export function parseAtomicalsDataDefinitionOperation(
   script,
   n,
   hexify = false,
-  addUtf8 = false
+  addUtf8 = false,
 ) {
   let rawdata: any = Buffer.allocUnsafe(0);
   try {
@@ -191,29 +191,29 @@ export function extractFileFromInputWitness(
   inputWitness: any[],
   hexify = false,
   addUtf8 = false,
-  markerSentinel = ATOMICALS_PROTOCOL_ENVELOPE_ID
+  markerSentinel = ATOMICALS_PROTOCOL_ENVELOPE_ID,
 ): any {
   for (const item of inputWitness) {
     const witnessScript: any = script.decompile(item);
-    console.log('extractFileFromInputWitness')
+    console.log('extractFileFromInputWitness');
     if (!witnessScript) {
       continue; // not valid script
     }
-    console.log('extractFileFromInputWitness after')
+    console.log('extractFileFromInputWitness after');
     for (let i = 0; i < witnessScript.length; i++) {
-      console.log('i', i)
+      console.log('i', i);
       if (witnessScript[i] === bitcoin.opcodes.OP_IF) {
         do {
           console.log('if matched', witnessScript[i]);
           if (Buffer.isBuffer(witnessScript[i])) {
-            console.log('if match utf8', witnessScript[i].toString('utf8')
+            console.log('if match utf8', witnessScript[i].toString('utf8'));
           }
         
           if (
             Buffer.isBuffer(witnessScript[i]) &&
             witnessScript[i].toString('utf8') === markerSentinel
           ) {
-            console.log('found markert sent', witnessScript[i].toString('utf8'))
+            console.log('found markert sent', witnessScript[i].toString('utf8'));
             for (; i < witnessScript.length; i++) {
               const opType = witnessScript[i].toString('utf8');
 
@@ -226,13 +226,13 @@ export function extractFileFromInputWitness(
                   opType === mintdft ||
                   opType === event)
               ) {
-                console.log('it is a dat', opType)
+                console.log('it is a dat', opType);
                 return parseAtomicalsDataDefinitionOperation(
                   opType,
                   witnessScript,
                   i + 1,
                   hexify,
-                  addUtf8
+                  addUtf8,
                 );
               }
             }
@@ -249,7 +249,7 @@ export function buildAtomicalsFileMapFromRawTx(
   rawtx: string,
   hexify = false,
   addUtf8 = false,
-  markerSentinel = ATOMICALS_PROTOCOL_ENVELOPE_ID
+  markerSentinel = ATOMICALS_PROTOCOL_ENVELOPE_ID,
 ): any {
   const tx = Transaction.fromHex(rawtx);
   const filemap = {};
@@ -260,7 +260,7 @@ export function buildAtomicalsFileMapFromRawTx(
         input.witness,
         hexify,
         addUtf8,
-        markerSentinel
+        markerSentinel,
       );
       if (fileInWitness) {
         filemap[i] = fileInWitness;
@@ -521,10 +521,10 @@ export function hexifyObjectWithUtf8(obj: any, utf8 = true): any {
 export function expandDataDecoded(record: any, hexify = true, addUtf8 = false) {
   if (record && record.mint_info) {
     try {
-      record.mint_info['data_decoded'] = decodePayloadCBOR(
-        record.mint_info['data'],
+      record.mint_info.data_decoded = decodePayloadCBOR(
+        record.mint_info.data,
         hexify,
-        addUtf8
+        addUtf8,
       );
     } catch (error) {}
   }
@@ -544,7 +544,7 @@ export function expandLocationInfo(record: AtomicalStatus) {
       updatedLocations.push(
         Object.assign({}, locationItem, {
           address: detectedAddress,
-        })
+        }),
       );
     }
     record.location_info_obj.locations = updatedLocations;
@@ -596,7 +596,7 @@ export function validateSubrealmRulesObject(object) {
   if (!object || !object.rules || !Array.isArray(object.rules) || !object.rules.length) {
     console.log('object', object);
     throw new Error(
-      `File path does not contain top level 'rules' array element with at least one rule set`
+      'File path does not contain top level \'rules\' array element with at least one rule set',
     );
   }
   for (const ruleset of object.rules) {
@@ -641,7 +641,7 @@ export function validateSubrealmRulesObject(object) {
  */
 export function IsAtomicalOwnedByWalletRecord(
   address: string,
-  atomical: AtomicalStatus
+  atomical: AtomicalStatus,
 ): IInputUtxoPartial | null {
   if (!(atomical.location_info_obj as any).length) {
     throw new Error('Error: location_info_obj not found');
@@ -654,7 +654,7 @@ export function IsAtomicalOwnedByWalletRecord(
 export function GetUtxoPartialFromLocation(
   addressToCheck: string,
   location: Location,
-  throwOnMismatch = true
+  throwOnMismatch = true,
 ): IInputUtxoPartial | null {
   if (!location) {
     throw new Error('Error: location not found');
@@ -674,7 +674,7 @@ export function GetUtxoPartialFromLocation(
         'location_info not match expected address. expectedAddress=' +
           addressToCheck +
           ', foundAddress=' +
-          location.address
+          location.address,
       );
     }
     return null;
