@@ -19,15 +19,23 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@bitcoinerlab/secp256k1": "^1.0.5",
+    "axios": "^1.6.0",
+    "bip32": "^4.0.0",
+    "bitcoinjs-lib": "^6.1.5",
+    "borc": "^3.0.0",
     "cors": "^2.8.5",
+    "crockford-base32": "^2.0.0",
     "dotenv": "^16.1.4",
+    "ecpair": "^2.1.0",
     "electrum-client": "file:./electrum-client",
     "express": "^4.18.2",
     "express-prettify": "^0.1.2",
     "express-slow-down": "^1.6.0",
     "helmet": "^7.0.0",
     "morgan": "^1.10.0",
-    "rpc-websockets": "^7.6.0"
+    "rpc-websockets": "^7.6.0",
+    "tiny-secp256k1": "^2.2.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",

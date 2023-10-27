@@ -2,7 +2,6 @@
 import * as ElectrumClient from 'electrum-client';
 import { URNType, decodeURN } from '../helpers/decode-urn';
 
-
 export function isAtomicalId(atomicalId) {
   if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
     return false;
@@ -14,8 +13,8 @@ export function isAtomicalId(atomicalId) {
     return {
       txid,
       index,
-      atomicalId
-    }
+      atomicalId,
+    };
   } catch (err) {
   }
   return null;
