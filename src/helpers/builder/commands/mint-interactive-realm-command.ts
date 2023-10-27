@@ -1,12 +1,15 @@
 /* eslint-disable import/first */
 var Buffer = require('buffer/').Buffer; // note: the trailing slash is important!
-window['Buffer'] = window['Buffer'] || Buffer;
-window['bitcoin'] = window['bitcoin'] || {};
-// eslint-disable-next-line import/first
-//import * as ecc from '@bitcoin-js/tiny-secp256k1-asmjs';
 import * as ecc from '@bitcoinerlab/secp256k1';
-// eslint-disable-next-line import/first
-window['bitcoin'].initEccLib(ecc);
+bitcoin.initEccLib(ecc);
+import {
+    initEccLib,
+    networks,
+    Psbt,
+} from "bitcoinjs-lib";
+initEccLib(ecc);
+
+
 import { AtomicalsGetFetchType, CommandInterface } from './command.interface';
 import { GetByRealmCommand } from './get-by-realm-command';
 import { isValidBitworkMinimum } from '../atomical-format-helpers';

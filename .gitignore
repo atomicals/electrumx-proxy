@@ -69,3 +69,5 @@ typings/
 .serverless
 
 dist
+
+.env
