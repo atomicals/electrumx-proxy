@@ -18,7 +18,7 @@ const handleUrnRequest = async (req, res) => {
     await connectClient();
   }
   try {
-    const urnResponseFactory = new UrnResponseFactory(connectClient);
+    const urnResponseFactory = new UrnResponseFactory(connectedClient);
     urnResponseFactory.handleRequest(req, res, randomId);
   } catch (err: any) {
     console.log('request_error', req.ip, randomId, method, err);
