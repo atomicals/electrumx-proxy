@@ -32,8 +32,9 @@ export class UrnResponseFactory {
         statusCode = 422;
       }
       res.status(statusCode).json({ success: false, code: err.code ? err.code : undefined, message: err.message ? err.message : err.toString() } as any);
+      return;
     }
-    res.status(200).json({ success: true, urn, urnInfo } as any);
+
   }
 
   private async handleAtomicalData(atomicalId: string, path: string, res) {

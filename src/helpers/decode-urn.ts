@@ -14,7 +14,7 @@ export interface URNInfo {
 
 export const decodeURN = (urn: string): URNInfo => {
   let matched;
-  if (matched = urn.match(/atom\:btc\:dat\:([0-9a-f]{32}i\d+)/)) {
+  if (matched = urn.match(/atom\:btc\:dat\:([0-9a-f]{64}i\d+)/)) {
     return {
       urnType: URNType.DAT,
       identifier: matched[0],
