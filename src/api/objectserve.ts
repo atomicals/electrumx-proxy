@@ -12,7 +12,7 @@ type ObjectServeResponse = any;
 const handleUrnRequest = async (req, res) => {
   const method = req.params.method;
   const randomId = Math.floor(Math.random() * 100000000);
-  console.log('urn_request', req.ip, randomId, method, req.params, req.query);
+  console.log('urn_request', req.ip, randomId, method, req.params, req.query, req.originalUrl);
   if (!connectedClient) {
     await connectClient();
   }
