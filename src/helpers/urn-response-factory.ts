@@ -9,6 +9,9 @@ export class UrnResponseFactory {
   async handleRequest(req: any, res: any, randomId: any) {
     let params = req.params;
     let urn = params.urn;
+    if (params['0']) {
+      urn += '/' + params['0'];
+    }
     let path = params.path;
     const urnInfo = decodeURN(urn);
     try {
