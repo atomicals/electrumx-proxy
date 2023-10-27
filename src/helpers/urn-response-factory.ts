@@ -86,7 +86,7 @@ export class UrnResponseFactory {
 
     if (fileMap && fileMap['0'] && fileMap['0']['decoded']) {
       const decoded = fileMap['0']['decoded'];
-      const trimmedPath = path.substring(1);
+      const trimmedPath: any = path ? path.substring(1) : '';
       if (decoded[trimmedPath]) {
         return decoded[trimmedPath];
       } else {
