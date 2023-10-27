@@ -217,6 +217,7 @@ export function extractFileFromInputWitness(
                   opType === mintdft ||
                   opType === event)
               ) {
+                console.log('it is a dat', opType)
                 return parseAtomicalsDataDefinitionOperation(
                   opType,
                   witnessScript,
