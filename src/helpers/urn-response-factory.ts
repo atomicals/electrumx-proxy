@@ -84,6 +84,7 @@ export class UrnResponseFactory {
     const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
     const fileMap = buildAtomicalsFileMapFromRawTx(response, true);
  
+    console.log('fileMap', fileMap)
     if (fileMap && fileMap['0'] && fileMap['decoded']) {
       res.status(200).json(fileMap['decoded']);
     } else {
