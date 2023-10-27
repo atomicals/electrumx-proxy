@@ -1,6 +1,6 @@
 {
   "name": "electrumx-proxy",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Electrumx Proxy Service",
   "main": "src/index.ts",
   "scripts": {
