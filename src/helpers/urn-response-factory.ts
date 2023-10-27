@@ -15,7 +15,6 @@ export class UrnResponseFactory {
     let path = params.path;
     const urnInfo = decodeURN(urn);
     try {
-
       /*
         const response = await this.client.general_getRequest('blockchain.atomicals.get_state', params);
         let sizeResponse = -1;
@@ -28,7 +27,6 @@ export class UrnResponseFactory {
         }*/
       console.log('request_success', req.ip, randomId);
       res.status(200).json({ success: true, urnInfo, path } as any);
-
     } catch (err: any) {
       console.log('request_error', req.ip, randomId, 'urn-response', err);
       let statusCode = 500;

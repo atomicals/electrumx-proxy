@@ -19,7 +19,7 @@ export const decodeURN = (urn: string): URNInfo => {
     console.log('matched', matched);
     return {
       urnType: URNType.DAT,
-      identifier: matched[0],
+      identifier: matched[1],
       path: matched[2] ? matched[2] : undefined,
     };
   }
