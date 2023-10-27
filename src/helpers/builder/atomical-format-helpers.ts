@@ -196,6 +196,7 @@ export function extractFileFromInputWitness(
 ): any {
   for (const item of inputWitness) {
     const witnessScript: any = script.decompile(item);
+    console.log('extractFileFromInputWitness')
     if (!witnessScript) {
       continue; // not valid script
     }
