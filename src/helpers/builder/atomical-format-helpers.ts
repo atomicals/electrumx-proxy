@@ -205,8 +205,11 @@ export function extractFileFromInputWitness(
       console.log('i', i)
       if (witnessScript[i] === bitcoin.opcodes.OP_IF) {
         do {
-          console.log('if matched', witnessScript[i])
-          console.log('if match utf8', witnessScript[i].toString('utf8'))
+          console.log('if matched', witnessScript[i]);
+          if (Buffer.isBuffer(witnessScript[i])) {
+            console.log('if match utf8', witnessScript[i].toString('utf8'))
+          }
+        
           if (
             Buffer.isBuffer(witnessScript[i]) &&
             witnessScript[i].toString('utf8') === markerSentinel
