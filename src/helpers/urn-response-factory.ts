@@ -51,6 +51,7 @@ export class UrnResponseFactory {
           atomicalId = await this.resolveContainer(urnInfo.identifier);
           break;
         case URNType.ATOMICAL_ID:
+          //this.handleAtomicalData(urnInfo.identifier, urnInfo.pathType, urnInfo.path as any, res);
           atomicalId = urnInfo.identifier;
           break;
         default:
