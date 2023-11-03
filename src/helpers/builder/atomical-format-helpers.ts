@@ -168,14 +168,12 @@ export function parseAtomicalsDataDefinitionOperation(
   } catch (err) {
     throw 'parse_atomicals_mint_operation script error';
   }
-  console.log('decodeds', rawdata);
   let decoded = {};
   try {
     decoded = decodePayloadCBOR(rawdata, hexify, addUtf8);
   } catch (error) {
     console.log('Error for atomical CBOR parsing ', error);
   }
-  console.log('decoded', decoded, rawdata);
   if (hexify) {
     rawdata = rawdata.toString('hex');
   }

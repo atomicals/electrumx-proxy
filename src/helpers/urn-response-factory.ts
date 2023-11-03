@@ -72,7 +72,7 @@ export class UrnResponseFactory {
     if (!path && (req.query.image || req.query.image === '')) {
       firstimage = true;
     }
-    
+
     try {
       const urnInfo = decodeURN(urn);
       let atomicalId: string | null = null;
@@ -178,7 +178,6 @@ export class UrnResponseFactory {
       const trimmedPath: any = path ? path.substring(1) : '';
       if (decoded[trimmedPath]) {
         const type = mime.lookup(trimmedPath)
-        console.log('type', type)
         res.set('Content-Type', type);
         res.status(200).send(Buffer.from(decoded[trimmedPath], 'hex'));
       } else {
