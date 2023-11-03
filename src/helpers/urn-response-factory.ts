@@ -15,7 +15,7 @@ function isImageFile(imagefile) {
   }
   const extName = splitname[1];
   return extName === 'jpg' || extName === 'gif' || extName === 'jpeg' || extName === 'png' || extName === 'svg' || extName === 'webp';
-} 
+}
 
 export function getFirstImagePath(state): any {
   for (const prop in state) {
@@ -64,7 +64,7 @@ export class UrnResponseFactory {
     }
     console.log('firstimage', firstimage)
     try {
-    const urnInfo = decodeURN(urn);
+      const urnInfo = decodeURN(urn);
       let atomicalId: string | null = null;
       switch (urnInfo.urnType) {
         case URNType.DAT:
@@ -115,7 +115,7 @@ export class UrnResponseFactory {
       if (response.result && response.result.state.latest[trimmedPath]) {
         const fieldData = response.result.state.latest[trimmedPath];
         if (Buffer.isBuffer(fieldData)) {
-          const type = mime.lookup(trimmedPath) 
+          const type = mime.lookup(trimmedPath)
           res.set('Content-Type', type);
           res.status(200).send(Buffer.from(response.result.state.latest[trimmedPath], 'hex'));
           return;
@@ -124,7 +124,7 @@ export class UrnResponseFactory {
             if (fieldData['$ct']) {
               res.set('Content-Type', fieldData['$ct']);
             } else {
-              const type = mime.lookup(trimmedPath) 
+              const type = mime.lookup(trimmedPath)
               res.set('Content-Type', type);
             }
             if (fieldData['$b']['$d']) {
@@ -134,7 +134,7 @@ export class UrnResponseFactory {
               res.status(200).send(Buffer.from(fieldData['$b'], 'hex'));
               return
             }
-          } 
+          }
           return;
         }
       } else {
@@ -158,31 +158,31 @@ export class UrnResponseFactory {
       const decoded = fileMap['0']['decoded'];
       const trimmedPath: any = path ? path.substring(1) : '';
       if (decoded[trimmedPath]) {
-        const type = mime.lookup(trimmedPath) 
+        const type = mime.lookup(trimmedPath)
         console.log('type', type)
         res.set('Content-Type', type);
         res.status(200).send(Buffer.from(decoded[trimmedPath], 'hex'));
       } else {
         res.status(200).json(decoded);
       }
-    
+
     } else {
       throw new Error('Not found');
     }
   }
 
   private async resolveContainer(containerName: string) {
-
-    return null;
+    const response = await this.client.general_getRequest('blockchain.transaction.get_by_container', [containerName]);
+    return response.result.atomical_id
   }
 
   private async resolveRealm(realm: string) {
-
-    return null;
+    const response = await this.client.general_getRequest('blockchain.transaction.get_by_realm', [realm]);
+    return response.result.atomical_id
   }
 
   private async resolveARC(ticker: string) {
-
-    return null;
+    const response = await this.client.general_getRequest('blockchain.transaction.get_by_ticker', [ticker]);
+    return response.result.atomical_id
   }
 }
