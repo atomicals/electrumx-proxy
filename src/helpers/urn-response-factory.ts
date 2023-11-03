@@ -5,6 +5,30 @@ import { URNType, decodeURN } from '../helpers/decode-urn';
 import { buildAtomicalsFileMapFromRawTx } from './builder/atomical-format-helpers';
 import * as mime from 'mime-types';
 
+function isImageFile(imagefile) {
+  if (!imagefile) {
+    return false;
+  }
+  const splitname = imagefile.split('.');
+  if (splitname.length !== 2) {
+    return false;
+  }
+  const extName = splitname[1];
+  return extName === 'jpg' || extName === 'gif' || extName === 'jpeg' || extName === 'png' || extName === 'svg' || extName === 'webp';
+} 
+
+export function getFirstImagePath(state): any {
+  for (const prop in state) {
+    if (!state.hasOwnProperty(prop)) {
+      continue;
+    }
+    if (isImageFile(prop)) {
+      return prop;
+    }
+  }
+  return null;
+}
+
 export function isAtomicalId(atomicalId) {
   if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
     return false;
@@ -75,11 +99,16 @@ export class UrnResponseFactory {
   }
 
   private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res, firstimage?: boolean) {
-    console.log('firstimage', firstimage)
     const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
     let sizeResponse = -1;
     try {
-      const trimmedPath: any = path ? path.substring(1) : '';
+      let trimmedPath: any;
+      if (path) {
+        trimmedPath = path ? path.substring(1) : '';
+      } else {
+        path = getFirstImagePath(response.result.state.latest)
+      }
+
       if (!trimmedPath || trimmedPath.trim() === "") {
         res.status(200).json(response.result.state.latest);
         return;
