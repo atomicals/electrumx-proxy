@@ -71,6 +71,7 @@ export class UrnResponseFactory {
 
   private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res) {
     const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
+    console.log(response)
     let sizeResponse = -1;
     try {
       const serialized = JSON.stringify(response);
@@ -86,7 +87,6 @@ export class UrnResponseFactory {
     const atomicalIdInfo: any = isAtomicalId(dataId);
     const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
     const fileMap = buildAtomicalsFileMapFromRawTx(response, true);
-
     if (fileMap && fileMap['0'] && fileMap['0']['decoded']) {
       const decoded = fileMap['0']['decoded'];
       console.log('path', path);
