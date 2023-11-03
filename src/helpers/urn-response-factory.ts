@@ -104,13 +104,11 @@ export class UrnResponseFactory {
           message: 'not found path'
         });
       }
-      const serialized = JSON.stringify(response);
-      sizeResponse = serialized.length;
     } catch (err) {
       // Ignore because it could not be json
       sizeResponse = response.length;
     }
-    res.status(200).json({ success: true, response } as any);
+    res.status(200).json(response.result.state.latest);
   }
 
   private async handlePermanentData(dataId: string, path: string, res) {
