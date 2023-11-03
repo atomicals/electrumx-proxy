@@ -34,8 +34,8 @@ export class UrnResponseFactory {
       urn += params['0'];
     }
     let path = params['0'];
-    const urnInfo = decodeURN(urn);
     try {
+    const urnInfo = decodeURN(urn);
       let atomicalId: string | null = null;
       switch (urnInfo.urnType) {
         case URNType.DAT:
