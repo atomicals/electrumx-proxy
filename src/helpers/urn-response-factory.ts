@@ -106,7 +106,7 @@ export class UrnResponseFactory {
       if (path) {
         trimmedPath = path ? path.substring(1) : '';
       } else {
-        path = getFirstImagePath(response.result.state.latest)
+        trimmedPath = getFirstImagePath(response.result.state.latest)
       }
 
       if (!trimmedPath || trimmedPath.trim() === "") {
