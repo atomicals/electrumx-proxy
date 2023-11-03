@@ -16,6 +16,22 @@ const esHost = process.env.ELECTRUMX_HOST;
 export let connectedClient;
 export let globalInterval;
 
+const MAX_PING_TIMEOUT_TO_REINIT_CONNECTION = 45 * 1000;
+// Track the last ping time
+let lastResponseTimePing = 0;
+function updatePingTime() {
+  lastResponseTimePing = (new Date()).getTime();
+  console.log('UPDATED_PING_TIME', lastResponseTimePing);
+}
+function timeNow() {
+  return (new Date()).getTime();
+}
+
+function lastPingTimeExpired() {
+  return lastResponseTimePing < timeNow() - MAX_PING_TIMEOUT_TO_REINIT_CONNECTION;
+}
+
+updatePingTime();
 /**
  * Connect the electrumX client and periodically test connection
  * Todo: There is a known bug where this keeps getting called
@@ -39,12 +55,21 @@ export const connectClient = async () => {
     connectedClient = defaultClient;
     // Prepare the keep Alive loop sends ping every 30 seconds
     globalInterval = setInterval(async () => {
+      if (lastPingTimeExpired()) {
+        console.log('LAST_PING_TIME_EXPIRED_RESETTING_CONNECTION', lastResponseTimePing);
+        await connectedClient.close()
+        return;
+      }
+      updatePingTime()
       console.log(`Sending keep-alive to ElectrumX(${esHost}:${esPort})...`);
       await defaultClient.serverDonation_address();
     }, 30 * 1000);
 
   } catch (error) {
     console.log('connectClient:exception', error);
+    if (connectedClient) {
+      connectedClient.close()
+    }
     connectedClient = null;
   }
 };
