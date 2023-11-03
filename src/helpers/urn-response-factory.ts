@@ -59,10 +59,10 @@ export class UrnResponseFactory {
     }
     let path = params['0'];
     let firstimage = false;
-    console.log('req.query', req.query)
     if (!path && (req.query.firstimage || req.query.firstimage === '')) {
       firstimage = true;
     }
+    console.log('firstimage', firstimage)
     try {
     const urnInfo = decodeURN(urn);
       let atomicalId: string | null = null;
@@ -80,7 +80,6 @@ export class UrnResponseFactory {
           atomicalId = await this.resolveContainer(urnInfo.identifier);
           break;
         case URNType.ATOMICAL_ID:
-          //this.handleAtomicalData(urnInfo.identifier, urnInfo.pathType, urnInfo.path as any, res);
           atomicalId = urnInfo.identifier;
           break;
         default:
