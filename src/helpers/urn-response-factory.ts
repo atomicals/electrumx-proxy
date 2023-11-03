@@ -29,6 +29,13 @@ export function getFirstImagePath(state): any {
   return null;
 }
 
+export function hasImageUrnField(state): any {
+  if (state && state['image']) {
+    return state['image'];
+  }
+  return null;
+}
+
 export function isAtomicalId(atomicalId) {
   if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
     return false;
@@ -62,7 +69,10 @@ export class UrnResponseFactory {
     if (!path && (req.query.firstimage || req.query.firstimage === '')) {
       firstimage = true;
     }
-    console.log('firstimage', firstimage)
+    if (!path && (req.query.image || req.query.image === '')) {
+      firstimage = true;
+    }
+    
     try {
       const urnInfo = decodeURN(urn);
       let atomicalId: string | null = null;
@@ -105,7 +115,16 @@ export class UrnResponseFactory {
       if (path) {
         trimmedPath = path ? path.substring(1) : '';
       } else if (firstimage) {
-        trimmedPath = getFirstImagePath(response.result.state.latest)
+        trimmedPath = getFirstImagePath(response.result.state.latest);
+
+        if (!trimmedPath) {
+          // Make an effort to get the 'image' field and see if there is a urn there
+          const imageFieldUrn = hasImageUrnField(response.result.state.latest);
+          if (imageFieldUrn) {
+            res.redirect('/urn/' + imageFieldUrn)
+            return;
+          }
+        }
       }
 
       if (!trimmedPath || trimmedPath.trim() === "") {
