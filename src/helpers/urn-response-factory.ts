@@ -74,6 +74,10 @@ export class UrnResponseFactory {
     let sizeResponse = -1;
     try {
       const trimmedPath: any = path ? path.substring(1) : '';
+      if (!trimmedPath || trimmedPath.trim() === "") {
+        res.status(200).json(response);
+        return;
+      }
       if (response.result && response.result.mint_data.fields[trimmedPath]) {
         const fieldData = response.result.mint_data.fields[trimmedPath];
         if (Buffer.isBuffer(fieldData)) {
