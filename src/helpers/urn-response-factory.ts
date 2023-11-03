@@ -5,6 +5,30 @@ import { URNType, decodeURN } from '../helpers/decode-urn';
 import { buildAtomicalsFileMapFromRawTx } from './builder/atomical-format-helpers';
 import * as mime from 'mime-types';
 
+function isImageFile(imagefile) {
+  if (!imagefile) {
+    return false;
+  }
+  const splitname = imagefile.split('.');
+  if (splitname.length !== 2) {
+    return false;
+  }
+  const extName = splitname[1];
+  return extName === 'jpg' || extName === 'gif' || extName === 'jpeg' || extName === 'png' || extName === 'svg' || extName === 'webp';
+} 
+
+export function getFirstImagePath(state): any {
+  for (const prop in state) {
+    if (!state.hasOwnProperty(prop)) {
+      continue;
+    }
+    if (isImageFile(prop)) {
+      return prop;
+    }
+  }
+  return null;
+}
+
 export function isAtomicalId(atomicalId) {
   if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
     return false;
@@ -34,12 +58,17 @@ export class UrnResponseFactory {
       urn += params['0'];
     }
     let path = params['0'];
-    const urnInfo = decodeURN(urn);
+    let firstimage = false;
+    if (!path && (req.query.firstimage || req.query.firstimage === '')) {
+      firstimage = true;
+    }
+    console.log('firstimage', firstimage)
     try {
+    const urnInfo = decodeURN(urn);
       let atomicalId: string | null = null;
       switch (urnInfo.urnType) {
         case URNType.DAT:
-          this.handlePermanentData(urnInfo.identifier, path, res);
+          this.handlePermanentData(urnInfo.identifier, path, res, firstimage);
           return;
         case URNType.REALM:
           atomicalId = await this.resolveRealm(urnInfo.identifier);
@@ -56,7 +85,7 @@ export class UrnResponseFactory {
         default:
           break;
       }
-      this.handleAtomicalData(atomicalId as any, urnInfo.pathType as any, path, res);
+      await this.handleAtomicalData(atomicalId as any, urnInfo.pathType as any, path, res, firstimage);
     } catch (err: any) {
       console.log('request_error', req.ip, randomId, 'urn-response', err);
       let statusCode = 500;
@@ -68,27 +97,60 @@ export class UrnResponseFactory {
     }
   }
 
-  private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res) {
+  private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res, firstimage?: boolean) {
     const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
     let sizeResponse = -1;
     try {
-      const serialized = JSON.stringify(response);
-      sizeResponse = serialized.length;
+      let trimmedPath: any;
+      if (path) {
+        trimmedPath = path ? path.substring(1) : '';
+      } else if (firstimage) {
+        trimmedPath = getFirstImagePath(response.result.state.latest)
+      }
+
+      if (!trimmedPath || trimmedPath.trim() === "") {
+        res.status(200).json(response.result.state.latest);
+        return;
+      }
+      if (response.result && response.result.state.latest[trimmedPath]) {
+        const fieldData = response.result.state.latest[trimmedPath];
+        if (Buffer.isBuffer(fieldData)) {
+          const type = mime.lookup(trimmedPath) 
+          res.set('Content-Type', type);
+          res.status(200).send(Buffer.from(response.result.state.latest[trimmedPath], 'hex'));
+          return;
+        } else {
+          if (fieldData['$b']) {
+            if (fieldData['$ct']) {
+              res.set('Content-Type', fieldData['$ct']);
+            } else {
+              const type = mime.lookup(trimmedPath) 
+              res.set('Content-Type', type);
+            }
+      
+            res.status(200).send(Buffer.from(fieldData['$b'], 'hex'));
+          } 
+          return;
+        }
+      } else {
+        res.status(404).json({
+          success: false,
+          message: 'not found path'
+        });
+      }
     } catch (err) {
       // Ignore because it could not be json
       sizeResponse = response.length;
     }
-    res.status(200).json({ success: true, response } as any);
+    res.status(200).json(response.result.state.latest);
   }
 
-  private async handlePermanentData(dataId: string, path: string, res) {
+  private async handlePermanentData(dataId: string, path: string, res, firstimage?: boolean) {
     const atomicalIdInfo: any = isAtomicalId(dataId);
     const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
     const fileMap = buildAtomicalsFileMapFromRawTx(response, true);
-
     if (fileMap && fileMap['0'] && fileMap['0']['decoded']) {
       const decoded = fileMap['0']['decoded'];
-      console.log('path', path);
       const trimmedPath: any = path ? path.substring(1) : '';
       if (decoded[trimmedPath]) {
         const type = mime.lookup(trimmedPath) 
