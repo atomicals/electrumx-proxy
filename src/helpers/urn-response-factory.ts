@@ -34,12 +34,16 @@ export class UrnResponseFactory {
       urn += params['0'];
     }
     let path = params['0'];
+    let firstimage = false;
+    if (!path && req.query.firstimage) {
+      firstimage = true;
+    }
     try {
     const urnInfo = decodeURN(urn);
       let atomicalId: string | null = null;
       switch (urnInfo.urnType) {
         case URNType.DAT:
-          this.handlePermanentData(urnInfo.identifier, path, res);
+          this.handlePermanentData(urnInfo.identifier, path, res, firstimage);
           return;
         case URNType.REALM:
           atomicalId = await this.resolveRealm(urnInfo.identifier);
@@ -57,7 +61,7 @@ export class UrnResponseFactory {
         default:
           break;
       }
-      await this.handleAtomicalData(atomicalId as any, urnInfo.pathType as any, path, res);
+      await this.handleAtomicalData(atomicalId as any, urnInfo.pathType as any, path, res, firstimage);
     } catch (err: any) {
       console.log('request_error', req.ip, randomId, 'urn-response', err);
       let statusCode = 500;
@@ -69,7 +73,8 @@ export class UrnResponseFactory {
     }
   }
 
-  private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res) {
+  private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res, firstimage?: boolean) {
+    console.log('firstimage', firstimage)
     const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
     let sizeResponse = -1;
     try {
@@ -111,13 +116,12 @@ export class UrnResponseFactory {
     res.status(200).json(response.result.state.latest);
   }
 
-  private async handlePermanentData(dataId: string, path: string, res) {
+  private async handlePermanentData(dataId: string, path: string, res, firstimage?: boolean) {
     const atomicalIdInfo: any = isAtomicalId(dataId);
     const response = await this.client.general_getRequest('blockchain.transaction.get', [atomicalIdInfo.txid]);
     const fileMap = buildAtomicalsFileMapFromRawTx(response, true);
     if (fileMap && fileMap['0'] && fileMap['0']['decoded']) {
       const decoded = fileMap['0']['decoded'];
-      console.log('path', path);
       const trimmedPath: any = path ? path.substring(1) : '';
       if (decoded[trimmedPath]) {
         const type = mime.lookup(trimmedPath) 
