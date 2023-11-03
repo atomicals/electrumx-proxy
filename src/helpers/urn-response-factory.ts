@@ -78,12 +78,12 @@ export class UrnResponseFactory {
         res.status(200).json(response);
         return;
       }
-      if (response.result && response.result.mint_data.fields[trimmedPath]) {
-        const fieldData = response.result.mint_data.fields[trimmedPath];
+      if (response.result && response.result.state.latest[trimmedPath]) {
+        const fieldData = response.result.state.latest[trimmedPath];
         if (Buffer.isBuffer(fieldData)) {
           const type = mime.lookup(trimmedPath) 
           res.set('Content-Type', type);
-          res.status(200).send(Buffer.from(response.result.mint_data.fields[trimmedPath], 'hex'));
+          res.status(200).send(Buffer.from(response.result.state.latest[trimmedPath], 'hex'));
           return;
         } else {
           if (fieldData['$b']) {
