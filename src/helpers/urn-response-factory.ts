@@ -75,7 +75,7 @@ export class UrnResponseFactory {
     try {
       const trimmedPath: any = path ? path.substring(1) : '';
       if (!trimmedPath || trimmedPath.trim() === "") {
-        res.status(200).json(response);
+        res.status(200).json(response.result.state.latest);
         return;
       }
       if (response.result && response.result.state.latest[trimmedPath]) {
