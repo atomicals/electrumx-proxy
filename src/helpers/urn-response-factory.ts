@@ -87,7 +87,13 @@ export class UrnResponseFactory {
           return;
         } else {
           if (fieldData['$b']) {
-            res.set('Content-Type', fieldData['$ct']);
+            if (fieldData['$ct']) {
+              res.set('Content-Type', fieldData['$ct']);
+            } else {
+              const type = mime.lookup(trimmedPath) 
+              res.set('Content-Type', type);
+            }
+      
             res.status(200).send(Buffer.from(fieldData['$b'], 'hex'));
           } 
           return;
