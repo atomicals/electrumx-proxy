@@ -35,6 +35,7 @@ export class UrnResponseFactory {
     }
     let path = params['0'];
     let firstimage = false;
+    console.log('req.query', req.query)
     if (!path && req.query.firstimage) {
       firstimage = true;
     }
