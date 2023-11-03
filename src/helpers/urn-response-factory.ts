@@ -172,17 +172,17 @@ export class UrnResponseFactory {
   }
 
   private async resolveContainer(containerName: string) {
-    const response = await this.client.general_getRequest('blockchain.transaction.get_by_container', [containerName]);
+    const response = await this.client.general_getRequest('blockchain.atomicals.get_by_container', [containerName]);
     return response.result.atomical_id
   }
 
   private async resolveRealm(realm: string) {
-    const response = await this.client.general_getRequest('blockchain.transaction.get_by_realm', [realm]);
+    const response = await this.client.general_getRequest('blockchain.atomicals.get_by_realm', [realm]);
     return response.result.atomical_id
   }
 
   private async resolveARC(ticker: string) {
-    const response = await this.client.general_getRequest('blockchain.transaction.get_by_ticker', [ticker]);
+    const response = await this.client.general_getRequest('blockchain.atomicals.get_by_ticker', [ticker]);
     return response.result.atomical_id
   }
 }
