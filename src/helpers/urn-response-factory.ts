@@ -74,6 +74,20 @@ export class UrnResponseFactory {
     console.log(response)
     let sizeResponse = -1;
     try {
+
+      const trimmedPath: any = path ? path.substring(1) : '';
+      if (response[trimmedPath]) {
+        const type = mime.lookup(trimmedPath) 
+        console.log('type', type)
+        res.set('Content-Type', type);
+        res.status(200).send(Buffer.from(response[trimmedPath], 'hex'));
+      } else {
+        res.status(404).json({
+          success: false,
+          message: 'not found path'
+        });
+      }
+
       const serialized = JSON.stringify(response);
       sizeResponse = serialized.length;
     } catch (err) {
