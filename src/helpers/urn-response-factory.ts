@@ -57,7 +57,7 @@ export class UrnResponseFactory {
         default:
           break;
       }
-      this.handleAtomicalData(atomicalId as any, urnInfo.pathType as any, path, res);
+      await this.handleAtomicalData(atomicalId as any, urnInfo.pathType as any, path, res);
     } catch (err: any) {
       console.log('request_error', req.ip, randomId, 'urn-response', err);
       let statusCode = 500;
