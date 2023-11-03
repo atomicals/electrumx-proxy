@@ -71,23 +71,29 @@ export class UrnResponseFactory {
 
   private async handleAtomicalData(atomicalId: string, pathType: string | any, path: string, res) {
     const response = await this.client.general_getRequest('blockchain.atomicals.get_state', [atomicalId]);
-    console.log(response)
     let sizeResponse = -1;
     try {
-
       const trimmedPath: any = path ? path.substring(1) : '';
-      if (response[trimmedPath]) {
-        const type = mime.lookup(trimmedPath) 
-        console.log('type', type)
-        res.set('Content-Type', type);
-        res.status(200).send(Buffer.from(response[trimmedPath], 'hex'));
+      if (response.result && response.result.mint_data.fields[trimmedPath]) {
+        const fieldData = response.result.mint_data.fields[trimmedPath];
+        if (Buffer.isBuffer(fieldData)) {
+          const type = mime.lookup(trimmedPath) 
+          res.set('Content-Type', type);
+          res.status(200).send(Buffer.from(response.result.mint_data.fields[trimmedPath], 'hex'));
+          return;
+        } else {
+          if (fieldData['$b']) {
+            res.set('Content-Type', fieldData['$ct']);
+            res.status(200).send(Buffer.from(fieldData['$b'], 'hex'));
+          } 
+          return;
+        }
       } else {
         res.status(404).json({
           success: false,
           message: 'not found path'
         });
       }
-
       const serialized = JSON.stringify(response);
       sizeResponse = serialized.length;
     } catch (err) {
