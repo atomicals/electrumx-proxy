@@ -93,7 +93,7 @@ const app = express();
 app.use(morgan('dev'));
 app.use(helmet());
 var corsOptions = {
-  origin: true
+  origin: '*'
 }
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)) // include before other routes
