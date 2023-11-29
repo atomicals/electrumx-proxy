@@ -92,8 +92,11 @@ export const ServerMessage = {
 const app = express();
 app.use(morgan('dev'));
 app.use(helmet());
-app.use(cors());
-app.options('*', cors()) // include before other routes
+var corsOptions = {
+  origin: true
+}
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)) // include before other routes
 app.use(express.json({ limit: '1mb', type: 'application/json' }));
 app.use(pretty({ query: 'pretty' }));
 
