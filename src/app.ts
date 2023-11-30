@@ -97,6 +97,11 @@ var corsOptions = {
 }
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)) // include before other routes
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'cross-origin');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
 app.use(express.json({ limit: '1mb', type: 'application/json' }));
 app.use(pretty({ query: 'pretty' }));
 
