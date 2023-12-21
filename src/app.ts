@@ -109,14 +109,16 @@ if (process.env.TRUST_PROXY === 'true') {
   app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
 }
 
-const speedLimiter = slowDown({
-  windowMs: process.env.RATE_LIMIT_WINDOW_SECONDS ? parseInt(process.env.RATE_LIMIT_WINDOW_SECONDS, 10) * 1000 : 15 * 60 * 1000, // 15 minutes
-  delayAfter: process.env.RATE_LIMIT_DELAY_AFTER ? parseInt(process.env.RATE_LIMIT_DELAY_AFTER, 10) : 100,  // allow 100 requests per 15 minutes, then...
-  delayMs: process.env.RATE_LIMIT_DELAY_MS ? parseInt(process.env.RATE_LIMIT_DELAY_MS, 10) : 500, // begin adding 500ms of delay per request above 100:
-});
-
-//  apply to all requests
-app.use(speedLimiter);
+if (process.env.RATE_LIMIT_STATUS === 'true'){
+  const speedLimiter = slowDown({
+    windowMs: process.env.RATE_LIMIT_WINDOW_SECONDS ? parseInt(process.env.RATE_LIMIT_WINDOW_SECONDS, 10) * 1000 : 15 * 60 * 1000, // 15 minutes
+    delayAfter: process.env.RATE_LIMIT_DELAY_AFTER ? parseInt(process.env.RATE_LIMIT_DELAY_AFTER, 10) : 100,  // allow 100 requests per 15 minutes, then...
+    delayMs: process.env.RATE_LIMIT_DELAY_MS ? parseInt(process.env.RATE_LIMIT_DELAY_MS, 10) : 500, // begin adding 500ms of delay per request above 100:
+  });
+  
+  //  apply to all requests
+  app.use(speedLimiter);
+}
 
 
 console.log('process.env.ELECTRUMX_PORT', process.env.ELECTRUMX_PORT);
